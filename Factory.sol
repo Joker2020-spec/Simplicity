@@ -38,16 +38,20 @@ contract TenantFactory is BuildingFactory {
     
     struct Tenant {
         string name;
+        uint lot;
         uint rent_charge;
         bool owner;
+        address key;
     }
     
     mapping (address => Tenant) public tenants;
     
     Tenant[] public list_of_tenants; 
     
-    function newTenant(string memory name, uint rent, bool _owner) public {
-    
+    function newTenant(string memory name, uint _lot, uint rent, bool _owner) public {
+        Tenant memory tenant = Tenant({name: name, lot: _lot, rent_charge: rent, owner: _owner, key: msg.sender});
+        list_of_tenants.push(tenant);
+        tenants[msg.sender] = tenant;
     }
     
 }
