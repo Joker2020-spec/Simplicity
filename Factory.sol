@@ -3,7 +3,7 @@ pragma solidity ^0.5.12;
 contract BuildingFactory {
     
     address public owner;
-    uint public max_buildings;
+    uint public max_buildings = 50;
     
     struct Building {
         uint max_lots;
@@ -19,6 +19,7 @@ contract BuildingFactory {
     
     function newFactory(uint maxlots, uint sizesqm, uint fireexits, address _owner, address _manager) public returns (bool success) {
         require (authorized[msg.sender] == true);
+        require (max_buildings > buildings.length);
         Building memory build = Building({max_lots: maxlots, size_sqm: sizesqm, fire_exits: fireexits, owner: _owner, manager: _manager});
         buildings.push(build);
         return success;
