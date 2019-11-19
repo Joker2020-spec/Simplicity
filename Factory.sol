@@ -56,4 +56,36 @@ contract TenantFactory is BuildingFactory {
         tenants[msg.sender] = tenant;
     }
     
+    function changeDetails(string memory _name, uint _lot, uint _rent, bool _owner, bool _active, address _key) public {
+        tenants[msg.sender].name = _name;
+        tenants[msg.sender].lot = _lot;
+        tenants[msg.sender].rent_charge = _rent;
+        tenants[msg.sender].owner = _owner;
+        tenants[msg.sender].active = _active;
+        tenants[msg.sender].key = _key;
+    }
+
+}
+
+contract InteractionFactory is BuildingFactory, TenantFactory {
+    
+    uint public total_messages;
+    
+    struct Message {
+        bytes message;
+        address from;
+        address too;
+    }
+    
+    mapping (address => mapping(uint => Message)) messages_sent;
+    mapping (address => mapping(uint => Message)) messages_received;
+    
+    function sendMessage(bytes32 _message, address too) public returns (bool msg_sent) {
+        Message memory mess = Message((abi.encode(_message)), msg.sender, too);
+        total_messages + 1;
+        messages_sent[msg.sender][total_messages] = mess;
+        messages_received[msg.sender][total_messages] = mess;
+        return msg_sent;
+    }
+    
 }
