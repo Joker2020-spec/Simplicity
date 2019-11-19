@@ -41,6 +41,7 @@ contract TenantFactory is BuildingFactory {
         uint lot;
         uint rent_charge;
         bool owner;
+        bool active;
         address key;
     }
     
@@ -49,7 +50,7 @@ contract TenantFactory is BuildingFactory {
     Tenant[] public list_of_tenants; 
     
     function newTenant(string memory name, uint _lot, uint rent, bool _owner) public {
-        Tenant memory tenant = Tenant({name: name, lot: _lot, rent_charge: rent, owner: _owner, key: msg.sender});
+        Tenant memory tenant = Tenant({name: name, lot: _lot, rent_charge: rent, owner: _owner, active: true, key: msg.sender});
         list_of_tenants.push(tenant);
         tenants[msg.sender] = tenant;
     }
