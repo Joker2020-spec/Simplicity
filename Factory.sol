@@ -88,4 +88,8 @@ contract InteractionFactory is BuildingFactory, TenantFactory {
         return msg_sent;
     }
     
+    function readMessage(address sender, uint _message) public view returns (bytes memory message) {
+        return messages_received[sender][_message].message;
+    }
+    
 }
