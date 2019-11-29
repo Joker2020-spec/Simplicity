@@ -28,7 +28,7 @@ contract BuildingFactory {
     }
     
     modifier isAuthorized() {
-        require(authorized[msg.sender] = true);
+        require (authorized[msg.sender] = true);
         _;
     }
     
