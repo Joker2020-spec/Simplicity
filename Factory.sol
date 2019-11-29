@@ -21,9 +21,14 @@ contract BuildingFactory {
         owner = msg.sender;
     }
     
-    modifier isOwnerOrManager() {
-        Building storage build = buildings[1];
-        require(msg.sender == owner || msg.sender == build.manager);
+    modifier isOwnerOrManager(uint _buildNumber) {
+        Building storage build = buildings[_buildNumber];
+        require(msg.sender == build.owner || msg.sender == build.manager);
+        _;
+    }
+    
+    modifier isAuthorized() {
+        require(authorized[msg.sender] = true);
         _;
     }
     
@@ -77,14 +82,14 @@ contract TenantFactory is BuildingFactory {
         tent.key = _key;
     }
     
-    function authorizeTenant(address _tenant, uint _tenantNumber) public {
+    function authorizeTenant(address _tenant, uint _tenantNumber) public isAuthorized {
         Tenant storage tent = list_of_tenants[_tenantNumber];
         require(tent.key == _tenant);
         tent.is_authorized = true;
         addAuthorizedKey(_tenant);
     }
     
-    function deAuthorizeTenant(address _tenant, uint _tenantNumber) public {
+    function deAuthorizeTenant(address _tenant, uint _tenantNumber) public isAuthorized {
         Tenant storage tent = list_of_tenants[_tenantNumber];
         require(tent.key == _tenant);
         tent.is_authorized = false;
@@ -127,7 +132,7 @@ contract InteractionFactory is BuildingFactory, TenantFactory {
         return messages_received[msg.sender][_message].message;
     }
     
-    function setNewRuling(string memory _rule, address[] memory _instructors) public returns (bool success) {
+    function setNewRuling(string memory _rule, address[] memory _instructors, uint _buildNumber) public isOwnerOrManager(_buildNumber) returns (bool success) {
         address[] memory rule_instructors = _instructors;
         Rule memory newRule = Rule(msg.sender, rule_instructors, (abi.encode(_rule)), true);
         rules.push(newRule);
