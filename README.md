@@ -6,3 +6,4 @@ Satoshi stole my WhitePaper!
 
 ^^^^^ 
 shit idea ayy, not worthy of a desk next to a junkie.
+
