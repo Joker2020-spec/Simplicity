@@ -23,7 +23,7 @@ contract BuildingFactory {
     
     modifier isOwnerOrManager(uint _buildNumber) {
         Building storage build = buildings[_buildNumber];
-        require(msg.sender == build.owner || msg.sender == build.manager);
+        require (msg.sender == build.owner || msg.sender == build.manager);
         _;
     }
     
@@ -84,14 +84,14 @@ contract TenantFactory is BuildingFactory {
     
     function authorizeTenant(address _tenant, uint _tenantNumber) public isAuthorized {
         Tenant storage tent = list_of_tenants[_tenantNumber];
-        require(tent.key == _tenant);
+        require (tent.key == _tenant);
         tent.is_authorized = true;
         addAuthorizedKey(_tenant);
     }
     
     function deAuthorizeTenant(address _tenant, uint _tenantNumber) public isAuthorized {
         Tenant storage tent = list_of_tenants[_tenantNumber];
-        require(tent.key == _tenant);
+        require (tent.key == _tenant);
         tent.is_authorized = false;
         removeAuthorizedKey(_tenant);
     }
