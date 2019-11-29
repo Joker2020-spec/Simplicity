@@ -56,13 +56,14 @@ contract TenantFactory is BuildingFactory {
         tenants[msg.sender] = tenant;
     }
     
-    function changeDetails(string memory _name, uint _lot, uint _rent, bool _owner, bool _active, address _key) public {
-        tenants[msg.sender].name = _name;
-        tenants[msg.sender].lot = _lot;
-        tenants[msg.sender].rent_charge = _rent;
-        tenants[msg.sender].owner = _owner;
-        tenants[msg.sender].active = _active;
-        tenants[msg.sender].key = _key;
+    function changeDetails(uint _tenantNumber, string memory _name, uint _lot, uint _rent, bool _owner, bool _active, address _key) public {
+        Tenant storage tent = list_of_tenants[_tenantNumber];
+        tent.name = _name;
+        tent.lot = _lot;
+        tent.rent_charge = _rent;
+        tent.owner = _owner;
+        tent.active = _active;
+        tent.key = _key;
     }
 
 }
@@ -80,16 +81,16 @@ contract InteractionFactory is BuildingFactory, TenantFactory {
     mapping (address => mapping(uint => Message)) messages_sent;
     mapping (address => mapping(uint => Message)) messages_received;
     
-    function sendMessage(bytes32 _message, address too) public returns (bool msg_sent) {
+    function sendMessage(string memory _message, address too) public returns (bool msg_sent_success) {
         Message memory mess = Message((abi.encode(_message)), msg.sender, too);
-        total_messages + 1;
+        total_messages++;
         messages_sent[msg.sender][total_messages] = mess;
-        messages_received[msg.sender][total_messages] = mess;
-        return msg_sent;
+        messages_received[too][total_messages] = mess;
+        return msg_sent_success;
     }
     
-    function readMessage(address sender, uint _message) public view returns (bytes memory message) {
-        return messages_received[sender][_message].message;
+    function readMessage(uint _message) public view returns (bytes memory message) {
+        return messages_received[msg.sender][_message].message;
     }
     
 }
