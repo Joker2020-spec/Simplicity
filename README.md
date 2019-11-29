@@ -1,3 +1,2 @@
 # Simplicity
 
-No Satoshi
