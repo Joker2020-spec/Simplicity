@@ -97,6 +97,7 @@ contract InteractionFactory is BuildingFactory, TenantFactory {
     
     struct Rule {
         address setter;
+        address[] instructors;
         bytes rule;
         bool active;
     }
@@ -118,8 +119,9 @@ contract InteractionFactory is BuildingFactory, TenantFactory {
         return messages_received[msg.sender][_message].message;
     }
     
-    function setNewRuling(string memory _rule) public returns (bool success) {
-        Rule memory newRule = Rule(msg.sender, (abi.encode(_rule)), true);
+    function setNewRuling(string memory _rule, address[] memory _instructors) public returns (bool success) {
+        address[] memory rule_instructors = _instructors;
+        Rule memory newRule = Rule(msg.sender, rule_instructors, (abi.encode(_rule)), true);
         rules.push(newRule);
         return success;
     }
