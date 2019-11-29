@@ -63,23 +63,23 @@ contract TenantFactory is BuildingFactory {
     }
     
     mapping (address => Tenant) public tenants;
+    mapping (address => bool) public active_tenants;
     
     Tenant[] public list_of_tenants; 
     
-    modifier isActive(uint _tenantNumber) {
-        Tenant storage tent = list_of_tenants[_tenantNumber];
-        require (tent.key == msg.sender);
-        require (tent.active = true);
+    modifier isActive() {
+        require (active_tenants[msg.sender] == true);
         _;
     }
     
     function newTenant(string memory name, uint _lot, uint rent, bool _owner) public {
         Tenant memory tenant = Tenant({name: name, lot: _lot, rent_charge: rent, owner: _owner, active: true, is_authorized: false, key: msg.sender});
+        active_tenants[msg.sender] = true;
         list_of_tenants.push(tenant);
         tenants[msg.sender] = tenant;
     }
     
-    function changeDetails(uint _tenantNumber, string memory _name, uint _lot, uint _rent, bool _owner, bool _active, address _key) public isActive(_tenantNumber) {
+    function changeDetails(uint _tenantNumber, string memory _name, uint _lot, uint _rent, bool _owner, bool _active, address _key) public isActive() {
         Tenant storage tent = list_of_tenants[_tenantNumber];
         tent.name = _name;
         tent.lot = _lot;
@@ -128,7 +128,7 @@ contract InteractionFactory is BuildingFactory, TenantFactory {
     
     Rule[] public rules;
     
-    function sendMessage(string memory _message, address too) public returns (bool msg_sent_success) {
+    function sendMessage(string memory _message, address too) public isActive() returns (bool msg_sent_success) {
         Message memory mess = Message((abi.encode(_message)), msg.sender, too);
         total_messages++;
         messages_sent[msg.sender][total_messages] = mess;
@@ -136,7 +136,7 @@ contract InteractionFactory is BuildingFactory, TenantFactory {
         return msg_sent_success;
     }
     
-    function readMessage(uint _message) public view returns (bytes memory message) {
+    function readMessage(uint _message) public view isActive() returns (bytes memory message) {
         return messages_received[msg.sender][_message].message;
     }
     
