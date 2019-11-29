@@ -25,7 +25,7 @@ contract BuildingFactory {
         return success;
     }
     
-    function addAuthorizedKey(address newkey) public {
+    function addAuthorizedKey(address newkey) internal {
         authorized[newkey] = true;
     }
     
@@ -43,6 +43,7 @@ contract TenantFactory is BuildingFactory {
         uint rent_charge;
         bool owner;
         bool active;
+        bool is_authorized;
         address key;
     }
     
@@ -51,7 +52,7 @@ contract TenantFactory is BuildingFactory {
     Tenant[] public list_of_tenants; 
     
     function newTenant(string memory name, uint _lot, uint rent, bool _owner) public {
-        Tenant memory tenant = Tenant({name: name, lot: _lot, rent_charge: rent, owner: _owner, active: true, key: msg.sender});
+        Tenant memory tenant = Tenant({name: name, lot: _lot, rent_charge: rent, owner: _owner, active: true, is_authorized: false, key: msg.sender});
         list_of_tenants.push(tenant);
         tenants[msg.sender] = tenant;
     }
@@ -64,6 +65,12 @@ contract TenantFactory is BuildingFactory {
         tent.owner = _owner;
         tent.active = _active;
         tent.key = _key;
+    }
+    
+    function authorizeTenant(address _tenant, uint _tenantNumber) public {
+        Tenant storage tent = list_of_tenants[_tenantNumber];
+        require(tent.key == _tenant);
+        tent.is_authorized = true;
     }
 
 }
