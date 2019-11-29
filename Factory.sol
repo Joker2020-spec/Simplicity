@@ -32,10 +32,10 @@ contract BuildingFactory {
         _;
     }
     
-    function newFactory(uint maxlots, uint sizesqm, uint fireexits, address _owner, address _manager) public returns (bool success) {
+    function newFactory(uint maxlots, uint sizesqm, uint fire_exits, address _owner, address _manager) public returns (bool success) {
         require (authorized[msg.sender] == true);
         require (max_buildings > buildings.length);
-        Building memory build = Building({max_lots: maxlots, size_sqm: sizesqm, fire_exits: fireexits, owner: _owner, manager: _manager});
+        Building memory build = Building({max_lots: maxlots, size_sqm: sizesqm, fire_exits: fire_exits, owner: _owner, manager: _manager});
         buildings.push(build);
         return success;
     }
