@@ -21,6 +21,12 @@ contract BuildingFactory {
         owner = msg.sender;
     }
     
+    modifier isOwnerOrManager() {
+        Building storage build = buildings[1];
+        require(msg.sender == owner || msg.sender == build.manager);
+        _;
+    }
+    
     function newFactory(uint maxlots, uint sizesqm, uint fireexits, address _owner, address _manager) public returns (bool success) {
         require (authorized[msg.sender] == true);
         require (max_buildings > buildings.length);
@@ -75,12 +81,14 @@ contract TenantFactory is BuildingFactory {
         Tenant storage tent = list_of_tenants[_tenantNumber];
         require(tent.key == _tenant);
         tent.is_authorized = true;
+        addAuthorizedKey(_tenant);
     }
     
     function deAuthorizeTenant(address _tenant, uint _tenantNumber) public {
         Tenant storage tent = list_of_tenants[_tenantNumber];
         require(tent.key == _tenant);
         tent.is_authorized = false;
+        removeAuthorizedKey(_tenant);
     }
 
 }
