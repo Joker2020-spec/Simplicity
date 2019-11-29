@@ -91,8 +91,16 @@ contract InteractionFactory is BuildingFactory, TenantFactory {
         address too;
     }
     
+    struct Rule {
+        address setter;
+        bytes rule;
+        bool active;
+    }
+    
     mapping (address => mapping(uint => Message)) messages_sent;
     mapping (address => mapping(uint => Message)) messages_received;
+    
+    Rule[] public rules;
     
     function sendMessage(string memory _message, address too) public returns (bool msg_sent_success) {
         Message memory mess = Message((abi.encode(_message)), msg.sender, too);
@@ -106,4 +114,10 @@ contract InteractionFactory is BuildingFactory, TenantFactory {
         return messages_received[msg.sender][_message].message;
     }
     
+    function setNewRuling(string memory _rule) public returns (bool success) {
+        Rule memory newRule = Rule(msg.sender, (abi.encode(_rule)), true);
+        rules.push(newRule);
+        return success;
+        
+    }
 }
