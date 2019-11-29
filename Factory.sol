@@ -66,13 +66,20 @@ contract TenantFactory is BuildingFactory {
     
     Tenant[] public list_of_tenants; 
     
+    modifier isActive(uint _tenantNumber) {
+        Tenant storage tent = list_of_tenants[_tenantNumber];
+        require (tent.key == msg.sender);
+        require (tent.active = true);
+        _;
+    }
+    
     function newTenant(string memory name, uint _lot, uint rent, bool _owner) public {
         Tenant memory tenant = Tenant({name: name, lot: _lot, rent_charge: rent, owner: _owner, active: true, is_authorized: false, key: msg.sender});
         list_of_tenants.push(tenant);
         tenants[msg.sender] = tenant;
     }
     
-    function changeDetails(uint _tenantNumber, string memory _name, uint _lot, uint _rent, bool _owner, bool _active, address _key) public {
+    function changeDetails(uint _tenantNumber, string memory _name, uint _lot, uint _rent, bool _owner, bool _active, address _key) public isActive(_tenantNumber) {
         Tenant storage tent = list_of_tenants[_tenantNumber];
         tent.name = _name;
         tent.lot = _lot;
