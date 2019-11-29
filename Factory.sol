@@ -108,6 +108,7 @@ contract TenantFactory is BuildingFactory {
 contract InteractionFactory is BuildingFactory, TenantFactory {
     
     uint public total_messages;
+    uint public total_rules;
     
     struct Message {
         bytes message;
@@ -143,6 +144,7 @@ contract InteractionFactory is BuildingFactory, TenantFactory {
         address[] memory rule_instructors = _instructors;
         Rule memory newRule = Rule(msg.sender, rule_instructors, (abi.encode(_rule)), true);
         rules.push(newRule);
+        total_rules = rules.length;
         return success;
     }
 }
