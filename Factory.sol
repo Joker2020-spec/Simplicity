@@ -17,6 +17,10 @@ contract BuildingFactory {
     
     Building[] public buildings;
     
+    constructor () internal {
+        owner = msg.sender;
+    }
+    
     function newFactory(uint maxlots, uint sizesqm, uint fireexits, address _owner, address _manager) public returns (bool success) {
         require (authorized[msg.sender] == true);
         require (max_buildings > buildings.length);
@@ -118,6 +122,5 @@ contract InteractionFactory is BuildingFactory, TenantFactory {
         Rule memory newRule = Rule(msg.sender, (abi.encode(_rule)), true);
         rules.push(newRule);
         return success;
-        
     }
 }
