@@ -29,7 +29,7 @@ contract BuildingFactory {
         authorized[newkey] = true;
     }
     
-    function removeAuthorizedKey(address badKey) public {
+    function removeAuthorizedKey(address badKey) internal {
         authorized[badKey] = false;
     }
 
@@ -71,6 +71,12 @@ contract TenantFactory is BuildingFactory {
         Tenant storage tent = list_of_tenants[_tenantNumber];
         require(tent.key == _tenant);
         tent.is_authorized = true;
+    }
+    
+    function deAuthorizeTenant(address _tenant, uint _tenantNumber) public {
+        Tenant storage tent = list_of_tenants[_tenantNumber];
+        require(tent.key == _tenant);
+        tent.is_authorized = false;
     }
 
 }
