@@ -55,6 +55,7 @@ contract TenantFactory is BuildingFactory {
     
     struct Tenant {
         string name;
+        uint building;
         uint lot;
         uint rent_charge;
         bool owner;
@@ -63,7 +64,8 @@ contract TenantFactory is BuildingFactory {
         address key;
     }
     
-    mapping (address => Tenant) public tenants;
+    mapping (address => Tenant) tenants;
+    mapping (address => mapping (uint => Building)) localised;
     mapping (address => bool) public active_tenants;
     
     Tenant[] public list_of_tenants; 
@@ -73,21 +75,35 @@ contract TenantFactory is BuildingFactory {
         _;
     }
     
-    function newTenant(string memory name, uint _lot, uint rent, bool _owner) public {
-        Tenant memory tenant = Tenant({name: name, lot: _lot, rent_charge: rent, owner: _owner, active: true, is_authorized: false, key: msg.sender});
+    function newTenant(string memory name, uint building_num,  uint _lot, uint rent, bool _owner) public {
+        Tenant memory tenant = Tenant({name: name, building: building_num, lot: _lot, rent_charge: rent, owner: _owner, active: true, is_authorized: false, key: msg.sender});
         active_tenants[msg.sender] = true;
         list_of_tenants.push(tenant);
         tenants[msg.sender] = tenant;
+        Building storage build = buildings[building_num];
+        localised[msg.sender][_lot] = build;
     }
     
-    function changeDetails(uint _tenantNumber, string memory _name, uint _lot, uint _rent, bool _owner, bool _active, address _key) public isActive() {
+    function changeDetails(uint _tenantNumber, string memory _name, uint _building, uint _lot, uint _rent, bool _owner, bool _active, address _key) public isActive() {
         Tenant storage tent = list_of_tenants[_tenantNumber];
         tent.name = _name;
+        tent.building = _building;
         tent.lot = _lot;
         tent.rent_charge = _rent;
         tent.owner = _owner;
         tent.active = _active;
         tent.key = _key;
+    }
+    
+    function getTenantInfo(uint _tenantNum) public view returns (string memory, uint, uint, uint, bool, bool, address) {
+        return(list_of_tenants[_tenantNum].name,
+               list_of_tenants[_tenantNum].building,
+               list_of_tenants[_tenantNum].lot,
+               list_of_tenants[_tenantNum].rent_charge,
+               list_of_tenants[_tenantNum].owner,
+               list_of_tenants[_tenantNum].active,
+               list_of_tenants[_tenantNum].key);
+            
     }
     
     function authorizeTenant(address _tenant, uint _tenantNumber) public isAuthorized {
