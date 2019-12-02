@@ -136,6 +136,7 @@ contract InteractionFactory is BuildingFactory, TenantFactory {
     }
     
     struct Rule {
+        uint building;
         address setter;
         address[] instructors;
         bytes rule;
@@ -161,7 +162,7 @@ contract InteractionFactory is BuildingFactory, TenantFactory {
     
     function setNewRuling(string memory _rule, address[] memory _instructors, uint _buildNumber) public isOwnerOrManager(_buildNumber) returns (bool success) {
         address[] memory rule_instructors = _instructors;
-        Rule memory newRule = Rule(msg.sender, rule_instructors, (abi.encode(_rule)), true);
+        Rule memory newRule = Rule(_buildNumber, msg.sender, rule_instructors, (abi.encode(_rule)), true);
         rules.push(newRule);
         total_rules = rules.length;
         return success;
