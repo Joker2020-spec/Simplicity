@@ -6,6 +6,7 @@ contract BuildingFactory {
     uint public max_buildings = 50;
     
     struct Building {
+        string build_name;
         uint build_number;
         uint max_lots;
         uint size_sqm;
@@ -33,10 +34,10 @@ contract BuildingFactory {
         _;
     }
     
-    function newFactory(uint maxlots, uint sizesqm, uint fire_exits, address _owner, address _manager) public returns (bool success) {
+    function newFactory(string memory build_name, uint maxlots, uint sizesqm, uint fire_exits, address _owner, address _manager) public returns (bool success) {
         require (authorized[msg.sender] == true);
         require (max_buildings > buildings.length);
-        Building memory build = Building({build_number: buildings.length, max_lots: maxlots, size_sqm: sizesqm, fire_exits: fire_exits, owner: _owner, manager: _manager});
+        Building memory build = Building({build_name: build_name, build_number: buildings.length, max_lots: maxlots, size_sqm: sizesqm, fire_exits: fire_exits, owner: _owner, manager: _manager});
         buildings.push(build);
         return success;
     }
