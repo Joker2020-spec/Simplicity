@@ -18,9 +18,11 @@ contract DocumentFactory {
     function SendDoc(bytes32 _hash, address[] memory _recivers) public returns (bool success) {
         address[] memory sender_receivers = _recivers;
         Total_Documents++;
-        Doc memory doc = Doc
+        Doc memory doc = Doc({
+            doc_hash: _hash,
+            sent: true
+        });
+        
     }
-    
-    
-    
+  
 }
