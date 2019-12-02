@@ -35,14 +35,14 @@ contract DocumentFactory {
     function GetDoc(uint doc_num) public view returns (bytes32 doc_hash) {
         for (uint i = 0; i < docs.length; i++) {
             if (docs.length == doc_num) {
+                Doc storage d = docs[doc_num];
+                doc_hash = d.doc_hash;
                 return doc_hash;
             }
         }
     }
   
 }
-
-
 
 
 
