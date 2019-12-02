@@ -55,6 +55,7 @@ contract TenantFactory is BuildingFactory {
     
     struct Tenant {
         string name;
+        uint tenant_number;
         uint building;
         uint lot;
         uint rent_charge;
@@ -76,7 +77,7 @@ contract TenantFactory is BuildingFactory {
     }
     
     function newTenant(string memory name, uint building_num,  uint _lot, uint rent, bool _owner) public {
-        Tenant memory tenant = Tenant({name: name, building: building_num, lot: _lot, rent_charge: rent, owner: _owner, active: true, is_authorized: false, key: msg.sender});
+        Tenant memory tenant = Tenant({name: name, tenant_number: list_of_tenants.length, building: building_num, lot: _lot, rent_charge: rent, owner: _owner, active: true, is_authorized: false, key: msg.sender});
         active_tenants[msg.sender] = true;
         list_of_tenants.push(tenant);
         tenants[msg.sender] = tenant;
