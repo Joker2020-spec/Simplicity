@@ -6,23 +6,38 @@ contract DocumentFactory {
     
     struct Doc {
         bytes32 doc_hash;
-        mapping (address => address[]) sender_receivers;
+        address[] recivers;
         bool sent;
     }
     
-    mapping (address => mapping(uint => Doc)) total_docs;
+    mapping (address => mapping(uint => Doc)) sent_docs_linked;
+    
+    
     mapping (address => bytes32) docs_linked;
+    mapping (address => address[]) sender_receiver;
+    
     
     Doc[] public docs;
     
     function SendDoc(bytes32 _hash, address[] memory _recivers) public returns (bool success) {
-        address[] memory sender_receivers = _recivers;
-        Total_Documents++;
+        address[] memory too_from = _recivers;
+        uint this_doc = Total_Documents++;
         Doc memory doc = Doc({
             doc_hash: _hash,
+            recivers: too_from,
             sent: true
         });
-        
+        sent_docs_linked[msg.sender][this_doc] = doc;
+        docs.push(doc);
+        return success;
+    }
+    
+    function GetDoc(uint doc_num) public view returns (bytes32 doc_hash) {
+        for (uint i = 0; i < docs.length; i++) {
+            if (docs.length == doc_num) {
+                return doc_hash;
+            }
+        }
     }
   
 }
