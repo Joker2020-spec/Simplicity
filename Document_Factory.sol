@@ -20,11 +20,11 @@ contract DocumentFactory {
     Doc[] public docs;
     
     function SendDoc(bytes32 _hash, address[] memory _recivers) public returns (bool success) {
-        address[] memory too_from = _recivers;
+        address[] memory _for = _recivers;
         uint this_doc = Total_Documents++;
         Doc memory doc = Doc({
             doc_hash: _hash,
-            recivers: too_from,
+            recivers: _for,
             sent: true
         });
         sent_docs_linked[msg.sender][this_doc] = doc;
