@@ -3,7 +3,7 @@ pragma experimental ABIEncoderV2;
 
 import"./Untitled1.sol";
 
-contract Payments is TenantFactory {
+contract Payments {
     
     uint NON_PAYMENT = 0;
     uint TOTAL_PAYMENTS_MADE = 0;
@@ -53,6 +53,7 @@ contract Payments is TenantFactory {
     
     function makePayment(uint pay_num, uint _finish_date, address _too) public returns (bool success) {
         checkAddress(_too);
+        checkTimePeriod(pay_num);
         Payment storage payment = payments_created[pay_num];
         payment.start_date = now;
         payment.finish_date = _finish_date;
@@ -68,6 +69,7 @@ contract Payments is TenantFactory {
     }
     
     function changePaymentTerms(uint _payment, uint new_time, uint new_amount) public returns (bool success) {
+        checkCreatorValid(_payment);
         payments_created[_payment].time = new_time;
         payments_created[_payment].payable_amount = new_amount;
         return success;
@@ -77,6 +79,15 @@ contract Payments is TenantFactory {
         if (msg.sender == _too) {
             revert("The sender and receiver have the same address");
         }
+    }
+    
+    function checkCreatorValid(uint _payment) internal view {
+        require(payments_created[_payment].receiver == msg.sender);
+    }
+    
+    function checkTimePeriod(uint _payment) internal view {
+        require(payments_created[_payment].time > 1 days);
+        require(payments_created[_payment].time <= 30 days);
     }
 
 }
