@@ -18,8 +18,8 @@ contract Payments is TenantFactory {
         uint finish_date;
         uint payment_number;
         bool payed;
-        address payer;
-        address payee;
+        address sender;
+        address receiver;
     }
     
     Payment[] payments_made;
@@ -36,8 +36,8 @@ contract Payments is TenantFactory {
             finish_date: 0, 
             payment_number: TOTAL_PAYMENTS_CREATED + 1, 
             payed: false, 
-            payer: address(0),
-            payee: msg.sender
+            sender: address(0),
+            receiver: msg.sender
         });
         TOTAL_PAYMENTS_CREATED + 1;
         payments_created.push(payment);
@@ -58,12 +58,18 @@ contract Payments is TenantFactory {
         payment.finish_date = _finish_date;
         payment.payment_number = TOTAL_PAYMENTS_MADE + 1;
         payment.payed = true;
-        payment.payer = msg.sender;
-        payment.payee = _too;
+        payment.sender = msg.sender;
+        payment.receiver = _too;
         TOTAL_PAYMENTS_MADE = payment.payment_number;
         payments_made.push(payment);
         payment_made[msg.sender][payment.payment_number] = payment;
         payed_too[payment.payment_number][payment.payable_amount] = _too;
+        return success;
+    }
+    
+    function changePaymentTerms(uint _payment, uint new_time, uint new_amount) public returns (bool success) {
+        payments_created[_payment].time = new_time;
+        payments_created[_payment].payable_amount = new_amount;
         return success;
     }
     
@@ -72,5 +78,5 @@ contract Payments is TenantFactory {
             revert("The sender and receiver have the same address");
         }
     }
-    
+
 }
