@@ -21,6 +21,8 @@ contract Payments is TenantFactory {
         bytes32 tx_hash;
     }
     
+    Payment[] payments;
+    
     mapping (address => mapping(uint => Payment)) payments_made;
     mapping (uint => mapping(uint => address)) payed_too;
     
@@ -42,6 +44,10 @@ contract Payments is TenantFactory {
         payments_made[msg.sender][TOTAL_PAYMENTS_MADE] = payment;
         payed_too[TOTAL_PAYMENTS_MADE][_amount] = _too;
         return success;
+    }
+    
+    function getPayment(uint _payment) public view returns (bytes32 tx_hash) {
+        return(payments[_payment].tx_hash);
     }
     
 }
