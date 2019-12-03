@@ -53,17 +53,17 @@ contract Payments is TenantFactory {
     
     function makePayment(uint pay_num, uint _finish_date, address _too) public returns (bool success) {
         checkAddress(_too);
-        Payment storage pay = payments_created[pay_num];
-        pay.start_date = now;
-        pay.finish_date = _finish_date;
-        pay.payment_number = TOTAL_PAYMENTS_MADE + 1;
-        pay.payed = true;
-        pay.payer = msg.sender;
-        pay.payee = _too;
-        TOTAL_PAYMENTS_MADE = pay.payment_number;
-        payments_made.push(pay);
-        payment_made[msg.sender][pay.payment_number] = pay;
-        payed_too[pay.payment_number][pay.payable_amount] = _too;
+        Payment storage payment = payments_created[pay_num];
+        payment.start_date = now;
+        payment.finish_date = _finish_date;
+        payment.payment_number = TOTAL_PAYMENTS_MADE + 1;
+        payment.payed = true;
+        payment.payer = msg.sender;
+        payment.payee = _too;
+        TOTAL_PAYMENTS_MADE = payment.payment_number;
+        payments_made.push(payment);
+        payment_made[msg.sender][payment.payment_number] = payment;
+        payed_too[payment.payment_number][payment.payable_amount] = _too;
         return success;
     }
     
