@@ -14,19 +14,21 @@ contract Payments is TenantFactory {
         uint payable_amount;
         uint start_date;
         uint finish_date;
+        uint payment_number;
         bool payed;
         address payer;
     }
     
     mapping (address => mapping(uint => Payment)) payments_made;
-    mapping (uint => address) payed_too;
+    mapping (uint => mapping(uint => address)) payed_too;
     
     function makePayment(uint _amount, uint _time, uint _finish_date, address _payee) public returns (bool success) {
-        require (_finish_date > now && _finish_date > 1 days);
-        Payment memory payment = Payment({time: _time, payable_amount: _amount, start_date: now, finish_date: _finish_date, payed: true, payer: msg.sender});
-        payments_made[msg.sender][_amount] = payment;
-        payed_too[_amount] = _payee;
+        require (_finish_date > now && _finish_date > MIN_PAYMENT_TERMS);
+        require (MAX_PAYMENT_TERMS >= _finish_date); 
         TOTAL_PAYMENTS_MADE + 1;
+        Payment memory payment = Payment({time: _time, payable_amount: _amount, start_date: now, finish_date: _finish_date, payment_number: TOTAL_PAYMENTS_MADE, payed: true, payer: msg.sender});
+        payments_made[msg.sender][_amount] = payment;
+        payed_too[TOTAL_PAYMENTS_MADE][_amount] = _payee;
         return success;
     }
     
