@@ -24,9 +24,9 @@ contract Payments is TenantFactory {
     mapping (address => mapping(uint => Payment)) payments_made;
     mapping (uint => mapping(uint => address)) payed_too;
     
-    function makePayment(uint _amount, uint _time, uint _finish_date, address _payee, address _too, bytes32 tx_id) public returns (bool success) {
-        require (_finish_date > now && _finish_date > MIN_PAYMENT_TERMS);
-        require (MAX_PAYMENT_TERMS >= _finish_date); 
+    function makePayment(uint _amount, uint _time, uint _finish_date, address _too, bytes32 tx_id) public returns (bool success) {
+        require (_finish_date > now && _finish_date > MIN_PAYMENT_TERMS, "Payment must be for a longer period than 1 day");
+        require (MAX_PAYMENT_TERMS >= _finish_date, "Must not be more than 30 days untill next payment, if due"); 
         TOTAL_PAYMENTS_MADE + 1;
         Payment memory payment = Payment({
             time: _time, 
@@ -39,8 +39,8 @@ contract Payments is TenantFactory {
             payee: _too,
             tx_hash: tx_id
         });
-        payments_made[msg.sender][_amount] = payment;
-        payed_too[TOTAL_PAYMENTS_MADE][_amount] = _payee;
+        payments_made[msg.sender][TOTAL_PAYMENTS_MADE] = payment;
+        payed_too[TOTAL_PAYMENTS_MADE][_amount] = _too;
         return success;
     }
     
