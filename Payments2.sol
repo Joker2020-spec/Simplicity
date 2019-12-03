@@ -29,19 +29,18 @@ contract Payments is TenantFactory {
     mapping (uint => mapping(uint => address)) payed_too;
     
     function createPayment(uint _amount, uint _time, address _sender) public returns (bool success) {
-       // require (_finish_date > now && _finish_date > MIN_PAYMENT_TERMS, "Payment must be for a longer period than 1 day");
-       //require (MAX_PAYMENT_TERMS >= _finish_date, "Must not be more than 30 days untill next payment, if due"); 
-        TOTAL_PAYMENTS_CREATED + 1;
+        checkValidCreator(_sender);
         Payment memory payment = Payment({
             time: _time, 
             payable_amount: _amount, 
             start_date: 0, 
             finish_date: 0, 
-            payment_number: TOTAL_PAYMENTS_CREATED, 
+            payment_number: TOTAL_PAYMENTS_CREATED + 1, 
             payed: false, 
             payer: _sender,
             payee: msg.sender
         });
+        TOTAL_PAYMENTS_CREATED + 1;
         payments_created.push(payment);
         return success;
     }
@@ -53,14 +52,31 @@ contract Payments is TenantFactory {
                payments_created[_payment].finish_date);
     }
     
-    function makePayment(uint pay_num, uint amount, uint _time, uint _finish_date, address _too) public returns (bool success) {
+    function makePayment(uint pay_num, uint _finish_date, address _too) public returns (bool success) {
+        checkAddress(_too);
         Payment storage pay = payments_created[pay_num];
         pay.start_date = now;
         pay.finish_date = _finish_date;
-        pay.payment_number = TOTAL_PAYMENTS_MADE;
+        pay.payment_number = TOTAL_PAYMENTS_MADE + 1;
         pay.payed = true;
         pay.payer = msg.sender;
         pay.payee = _too;
-        
+        TOTAL_PAYMENTS_MADE = pay.payment_number;
+        payments_made.push(pay);
+        payment_made[msg.sender][pay.payment_number] = pay;
+        payed_too[pay.payment_number][pay.payable_amount] = _too;
+        return success;
+    }
+    
+    function checkAddress(address _too) internal view {
+        if (msg.sender == _too) {
+            revert("The sender and receiver have the same address");
+        }
+    }
+    
+    function checkValidCreator(address _sender) internal view {
+        if (msg.sender == _sender) {
+            revert("The creator is trying to pay himself.");
+        }
     }
 }
