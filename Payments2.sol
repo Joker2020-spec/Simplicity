@@ -28,8 +28,7 @@ contract Payments is TenantFactory {
     mapping (address => mapping(uint => Payment)) payment_made;
     mapping (uint => mapping(uint => address)) payed_too;
     
-    function createPayment(uint _amount, uint _time, address _sender) public returns (bool success) {
-        checkValidCreator(_sender);
+    function createPayment(uint _amount, uint _time) public returns (bool success) {
         Payment memory payment = Payment({
             time: _time, 
             payable_amount: _amount, 
@@ -37,7 +36,7 @@ contract Payments is TenantFactory {
             finish_date: 0, 
             payment_number: TOTAL_PAYMENTS_CREATED + 1, 
             payed: false, 
-            payer: _sender,
+            payer: address(0),
             payee: msg.sender
         });
         TOTAL_PAYMENTS_CREATED + 1;
@@ -74,9 +73,4 @@ contract Payments is TenantFactory {
         }
     }
     
-    function checkValidCreator(address _sender) internal view {
-        if (msg.sender == _sender) {
-            revert("The creator is trying to pay himself.");
-        }
-    }
 }
