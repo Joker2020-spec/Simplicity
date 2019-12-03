@@ -55,4 +55,7 @@ contract Payments is TenantFactory {
         TOTAL_PAYMENTS_MADE = 0;
     }
     
+    function checkPaymentTerms(uint _payment) public view returns (uint) {
+        
+    }
 }
