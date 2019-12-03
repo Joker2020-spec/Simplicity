@@ -50,4 +50,9 @@ contract Payments is TenantFactory {
         return(payments[_payment].tx_hash);
     }
     
+    function resetTotalPayments() public {
+        require(TOTAL_PAYMENTS_MADE <= 1000);
+        TOTAL_PAYMENTS_MADE = 0;
+    }
+    
 }
