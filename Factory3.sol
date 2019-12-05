@@ -213,7 +213,7 @@ contract Tenant is Buildings {
     }
     
     function authorizeTenant(address _key) public returns (bool) {
-        require(tenantInfo.tenants[_key].key == _key);
+        require(tenantInfo.tenants[_key].key == _key, "Check to see if the key being authorized matches the key linked to the tenant");
         tenantInfo.tenants[_key].is_authorized = true;
         addAuthorizedKey(_key);
         return true;
