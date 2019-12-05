@@ -147,5 +147,6 @@ contract Buildings {
 
 contract Tenant is Buildings {
     
+    using Contract for Contract.Tenant;
     
 }
