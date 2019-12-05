@@ -1,7 +1,4 @@
 pragma solidity ^0.5.12;
-pragma experimental ABIEncoderV2;
-
-import"./Untitled1.sol";
 
 contract Payments {
     
@@ -75,6 +72,10 @@ contract Payments {
         return success;
     }
     
+    function getPayment(uint _payment) public view returns (uint, uint, uint, uint, uint, bool, address, address) {
+        
+    }
+    
     function changePaymentTerms(uint _payment, uint new_time, uint new_amount) public returns (bool success) {
         checkCreatorValid(_payment);
         payments_created[_payment].time = new_time;
@@ -89,21 +90,23 @@ contract Payments {
     }
     
     function checkCreatorValid(uint _payment) internal view {
-        require(payments_created[_payment].receiver == msg.sender);
+        require(payments_created[_payment].receiver == msg.sender,
+                    "The creator of the payment is the address that will receive the payment");
     }
     
     function checkTimePeriod(uint _payment) internal view {
-        require(payments_created[_payment].time >= 1 days);
-        require(payments_created[_payment].time <= 30 days);
+        require(payments_created[_payment].time >= 1 days, "Payment last for 1 day or longer");
+        require(payments_created[_payment].time <= 30 days, "Payment last for no longer that 30 days");
     }
     
     function checkPaymentValid(uint _payment) internal view {
-        require(payments_created[_payment].payed == false);
+        require(payments_created[_payment].payed == false,
+                    "The payment has not executed yet");
     }
     
     function checkPayableAmount(uint _amount, uint _payment) internal view {
         Payment storage pay = payments_created[_payment];
-        require (pay.payable_amount == _amount);
+        require (pay.payable_amount == _amount, "The amount due against the payment is equal to the value being sent");
     }
  
 }
