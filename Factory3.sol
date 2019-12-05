@@ -130,6 +130,18 @@ library Contract {
             msg.sender);
         payment.total_payments.length++;    
     }
+    
+    function changePaymentDetails(PaymentInfo storage payment, uint new_time, uint new_amount) internal {
+        payment.payments_created[msg.sender] = Payment(
+            new_time, 
+            new_amount, 
+            0, 
+            0, 
+            payment.total_payments.length, 
+            false, 
+            address(0),
+            msg.sender);
+    }
 
 }
 
@@ -284,4 +296,14 @@ contract PaymentContract is TenantContract {
                payment_info.payments_created[_key].payed);
     }
     
+    function changeDetailsOfPayment(uint _payment, uint new_time, uint new_amount) public returns (bool) {
+        for (uint i = 0; i < payments_made.length; i++) {
+                if (payments_made[i] == _payment) {
+                    payment_info.changePaymentDetails(new_time, new_amount);
+                    return true;
+                }  
+        }
+        
+    }
+
 }
