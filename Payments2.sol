@@ -42,6 +42,7 @@ contract Payments {
         });
         TOTAL_PAYMENTS_CREATED + 1;
         payments_created.push(payment);
+        checkCreatorValid(payments_created.length);
         return success;
     }
     
