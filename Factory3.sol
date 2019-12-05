@@ -50,6 +50,7 @@ library Contract {
     }
     
     struct BuildingInfo {
+        mapping (address => Building) owners;
         mapping (address => bool) authorized;
         Building[] buildings;
     }
@@ -77,6 +78,19 @@ library Contract {
         mapping(address => mapping(uint => Rule)) rules_set;
         Rule[] rules;
     }
+    
+    function NewFactory(BuildingInfo storage build, string memory _name, uint maxlots, uint sizesqm, uint fire_exits, address _owner, address _manager) internal {
+        require (build.authorized[msg.sender] == true,
+                    "The creator of the Factory is an authorzied key");
+        build.owners[msg.sender] = Building(
+            _name,
+            0,
+            maxlots,
+            sizesqm,
+            fire_exits,
+            _owner,
+            _manager);
+    }
 
 }
 
@@ -89,8 +103,11 @@ contract Buildings {
     using Contract for Contract.Building;
     using Contract for Contract.BuildingInfo;
     
-    Contract.Building building;
+    Contract infomation;
+    Contract.Building Building;
     Contract.BuildingInfo buildingInfo;
+    
+    uint[] buildings;
     
      constructor () internal {
         owner = msg.sender;
@@ -98,7 +115,7 @@ contract Buildings {
     }
     
     modifier isOwnerOrManager(uint _buildNumber) {
-        require (msg.sender == building.owner || msg.sender == building.manager,
+        require (msg.sender == Building.owner || msg.sender == Building.manager,
                     "Caller of the function is the owner or manager of the building");
         _;
     }
@@ -114,6 +131,12 @@ contract Buildings {
     
     function removeAuthorizedKey(address badKey) internal {
         buildingInfo.authorized[badKey] = false;
+    }
+    
+    function newBuilding(string memory _name, uint maxlots, uint sizesqm, uint fire_exits, address _owner, address _manager) public returns (bool success) {
+        require (max_buildings > buildings.length,
+                        "The amount of buildings using the contract is not above the MAX LIMIT of 50");
+        buildingInfo.NewFactory(_name, buildings.length, sizesqm, fire_exits, _owner, _manager);          
     }
     
 }
