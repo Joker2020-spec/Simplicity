@@ -73,7 +73,15 @@ contract Payments {
     }
     
     function getPayment(uint _payment) public view returns (uint, uint, uint, uint, uint, bool, address, address) {
-        
+        Payment memory payment = payments_made[_payment];
+        return(payment.time,
+               payment.payable_amount,
+               payment.start_date,
+               payment.finish_date,
+               payment.payment_number,
+               payment.payed,
+               payment.sender,
+               payment.receiver);
     }
     
     function changePaymentTerms(uint _payment, uint new_time, uint new_amount) public returns (bool success) {
