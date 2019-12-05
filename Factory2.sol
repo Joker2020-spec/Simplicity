@@ -25,7 +25,8 @@ contract BuildingFactory {
     
     modifier isOwnerOrManager(uint _buildNumber) {
         Building storage build = buildings[_buildNumber];
-        require (msg.sender == build.owner || msg.sender == build.manager);
+        require (msg.sender == build.owner || msg.sender == build.manager,
+                    "Caller of the function is the owner or manager of the building");
         _;
     }
     
