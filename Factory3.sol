@@ -138,6 +138,8 @@ contract Buildings {
         require (max_buildings > buildings.length,
                         "The amount of buildings using the contract is not above the MAX LIMIT of 50");
         buildingInfo.NewFactory(_name, buildings.length, maxlots, sizesqm, fire_exits, _owner, _manager);
+        current_buildings++;
+        buildings.push(current_buildings);
         return success;
     }
     
