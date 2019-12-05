@@ -118,6 +118,7 @@ contract TenantFactory is BuildingFactory {
     function deAuthorizeTenant(address _tenant, uint _tenantNumber) public isAuthorized {
         Tenant storage tent = list_of_tenants[_tenantNumber];
         require (tent.key == _tenant);
+        tent.active = false;
         tent.is_authorized = false;
         removeAuthorizedKey(_tenant);
     }
