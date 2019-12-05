@@ -61,7 +61,7 @@ library Contract {
     }
     
     struct PaymentInfo {
-        mapping (address => Payment) payment_created;
+        mapping (address => Payment) payments_created;
         mapping (uint => mapping(uint => address)) payed_too;
         uint[] total_payments;
     }
@@ -119,7 +119,7 @@ library Contract {
     }
     
     function createPayment(PaymentInfo storage payment, uint _amount, uint _timeLength) internal {
-        payment.payment_created[msg.sender] = Payment(
+        payment.payments_created[msg.sender] = Payment(
             _timeLength, 
             _amount, 
             0, 
@@ -273,6 +273,15 @@ contract PaymentContract is TenantContract {
         TOTAL_PAYMENTS_CREATED++;
         payments_made.push(TOTAL_PAYMENTS_CREATED);
         return success;
+    }
+    
+    function getPaymentDetails(address _key) public view returns (uint, uint, uint, uint, uint, bool) {
+        return(payment_info.payments_created[_key].time,
+               payment_info.payments_created[_key].payable_amount,
+               payment_info.payments_created[_key].start_date,
+               payment_info.payments_created[_key].finish_date,
+               payment_info.payments_created[_key].payment_number,
+               payment_info.payments_created[_key].payed);
     }
     
 }
