@@ -9,7 +9,7 @@ contract BuildingFactory {
     struct Building {
         string build_name;
         uint build_number;
-        uint max_lots;
+        uint total_lots;
         uint size_sqm;
         uint fire_exits;
         address owner;
@@ -22,6 +22,7 @@ contract BuildingFactory {
     
     constructor () internal {
         owner = msg.sender;
+        authorized[owner] = true;
     }
     
     modifier isOwnerOrManager(uint _buildNumber) {
@@ -41,7 +42,7 @@ contract BuildingFactory {
                     "The creator of the Factory is an authorzied key");
         require (max_buildings > buildings.length,
                         "The amount of buildings using the contract is not above the MAX LIMIT of 50");
-        Building memory build = Building({build_name: build_name, build_number: buildings.length, max_lots: maxlots, size_sqm: sizesqm, fire_exits: fire_exits, owner: _owner, manager: _manager});
+        Building memory build = Building({build_name: build_name, build_number: buildings.length, total_lots: maxlots, size_sqm: sizesqm, fire_exits: fire_exits, owner: _owner, manager: _manager});
         current_buildings++;
         buildings.push(build) - current_buildings;
         return success;
