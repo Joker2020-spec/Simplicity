@@ -148,7 +148,7 @@ contract Buildings {
     }
     
     modifier isAuthorized() {
-        require (buildingInfo.authorized[msg.sender] = true);
+        require (buildingInfo.authorized[msg.sender] = true, "Check to see if the key calling the function is authorized to do so!");
         _;
     }
     
@@ -185,7 +185,8 @@ contract Tenant is Buildings {
     uint[] list_of_tenants;
     
      modifier isActive() {
-        require (tenantInfo.active_tenants[msg.sender] == true);
+        require (tenantInfo.active_tenants[msg.sender] == true,
+                    "Check to ensure that the key calling the function is active with contract");
         _;
     }
     
@@ -220,8 +221,8 @@ contract Tenant is Buildings {
     }
     
     function deAuthorizeTenant(address _key) public returns (bool) {
-        require(tenantInfo.tenants[_key].key == _key);
-        require(tenantInfo.tenants[_key].is_authorized == true);
+        require(tenantInfo.tenants[_key].key == _key, "Check to see if the key being de-authorized matches the key linked to the tenant");
+        require(tenantInfo.tenants[_key].is_authorized == true, "Check to see if the key is currently authorized");
         tenantInfo.tenants[_key].is_authorized = false;
         removeAuthorizedKey(_key);
         return true;
