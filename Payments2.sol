@@ -6,11 +6,11 @@ import"./Untitled1.sol";
 contract Payments {
     
     
-    uint NON_PAYMENT = 0;
+    uint8 NON_PAYMENT = 0;
     uint public TOTAL_PAYMENTS_MADE = 0;
-    uint public TOTAL_PAYMENTS_CREATED = 0;
-    uint MAX_PAYMENT_TERMS = 30 days;
-    uint MIN_PAYMENT_TERMS = 1 days;
+    uint8 public TOTAL_PAYMENTS_CREATED = 0;
+    uint24 MAX_PAYMENT_TERMS = 30 days;
+    uint24 MIN_PAYMENT_TERMS = 1 days;
     
     struct Payment {
         uint time;
@@ -64,11 +64,11 @@ contract Payments {
         payment.payable_amount = _amount;
         payment.start_date = now;
         payment.finish_date = _finish_date;
-        payment.payment_number = TOTAL_PAYMENTS_MADE - 1;
+        payment.payment_number = payments_created.length;
         payment.payed = true;
         payment.sender = msg.sender;
         payment.receiver = _too;
-        TOTAL_PAYMENTS_MADE = payment.payment_number;
+        TOTAL_PAYMENTS_MADE = payments_created.length;
         payments_made.push(payment);
         payment_made[msg.sender][payment.payment_number] = payment;
         payed_too[payment.payment_number][payment.payable_amount] = _too;
