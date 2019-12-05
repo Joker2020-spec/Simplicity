@@ -59,7 +59,6 @@ library Contract {
        mapping (address => Tenant) tenants;
        mapping (address => mapping (uint => Building)) localised;
        mapping (address => bool) active_tenants;
-       Tenant[] list_of_tenants; 
     }
     
     struct PaymentInfo {
@@ -91,6 +90,20 @@ library Contract {
             fire_exits,
             _owner,
             _manager);
+    }
+    
+    function newTenant(TenantInfo storage tenant, string memory _name, uint _tenantNum, uint building_num,  uint _lot, uint _rent, bool _owner) internal {
+        _tenantNum = 0;
+        tenant.tenants[msg.sender] = Tenant(
+            _name,
+            _tenantNum,
+            building_num,
+            _lot,
+            _rent,
+            _owner,
+            true,
+            false,
+            msg.sender);
     }
 
 }
@@ -147,6 +160,31 @@ contract Buildings {
 
 contract Tenant is Buildings {
     
+    uint public TOTAL_AMOUNT_OF_TENANTS = 0;
+    
     using Contract for Contract.Tenant;
+    using Contract for Contract.TenantInfo;
+    
+    
+    Contract.Tenant tenant;
+    Contract.TenantInfo tenantInfo;
+    
+    uint[] list_of_tenants;
+    
+     modifier isActive() {
+        require (tenantInfo.active_tenants[msg.sender] == true);
+        _;
+    }
+    
+    function addNewTenant(string memory _name, uint building_num,  uint _lot, uint _rent, bool _owner) public returns (bool success) {
+        tenantInfo.newTenant(_name, list_of_tenants.length, building_num, _lot, _rent, _owner);
+        TOTAL_AMOUNT_OF_TENANTS++;
+        list_of_tenants.push(TOTAL_AMOUNT_OF_TENANTS);
+        return success;
+    }
+    
+    function totalTenants() public view returns (uint) {
+        return(list_of_tenants.length);
+    }
     
 }
