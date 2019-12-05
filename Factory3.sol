@@ -85,7 +85,7 @@ library Contract {
         _buildNum = 0;            
         build.owners[msg.sender] = Building(
             _name,
-            0,
+            _buildNum,
             maxlots,
             sizesqm,
             fire_exits,
