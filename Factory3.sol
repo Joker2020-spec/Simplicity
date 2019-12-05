@@ -82,15 +82,38 @@ library Contract {
 
 contract Buildings {
     
+    address public owner;
+    uint public current_buildings = 0;
+    uint public max_buildings = 50;
+    
     using Contract for Contract.Building;
+    using Contract for Contract.BuildingInfo;
     
     Contract.Building building;
+    Contract.BuildingInfo buildingInfo;
+    
+     constructor () internal {
+        owner = msg.sender;
+        buildingInfo.authorized[owner] = true;
+    }
     
     modifier isOwnerOrManager(uint _buildNumber) {
-        // building storage build = Buildings[_buildNumber];
         require (msg.sender == building.owner || msg.sender == building.manager,
                     "Caller of the function is the owner or manager of the building");
         _;
+    }
+    
+    modifier isAuthorized() {
+        require (buildingInfo.authorized[msg.sender] = true);
+        _;
+    }
+    
+    function addAuthorizedKey(address newkey) internal {
+        buildingInfo.authorized[newkey] = true;
+    }
+    
+    function removeAuthorizedKey(address badKey) internal {
+        buildingInfo.authorized[badKey] = false;
     }
     
 }
