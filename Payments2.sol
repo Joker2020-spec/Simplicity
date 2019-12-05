@@ -3,7 +3,7 @@ pragma experimental ABIEncoderV2;
 
 import"./Untitled1.sol";
 
-contract Payments is TenantFactory {
+contract Payments {
     
     
     uint NON_PAYMENT = 0;
@@ -55,6 +55,8 @@ contract Payments is TenantFactory {
     function makePayment(uint _amount, uint pay_num, uint _finish_date, address _too) public returns (bool success) {
         checkAddress(_too);
         checkTimePeriod(pay_num);
+        checkPayableAmount(_amount, pay_num);
+        checkPaymentValid(pay_num);
         Payment storage payment = payments_created[pay_num];
         payment.payable_amount = _amount;
         payment.start_date = now;
@@ -92,14 +94,13 @@ contract Payments is TenantFactory {
         require(payments_created[_payment].time <= 30 days);
     }
     
-    function checkPayableAmount(uint _amount, uint _payment, address _too) internal view returns (bool) {
+    function checkPaymentValid(uint _payment) internal view {
+        require(payments_created[_payment].payed == false);
+    }
+    
+    function checkPayableAmount(uint _amount, uint _payment) internal view {
         Payment storage pay = payments_created[_payment];
         require (pay.payable_amount == _amount);
-        for (uint i = 0; i < list_of_tenants.length; i++) {
-            if (list_of_tenants[i].rent_charge == _amount) {
-                require (list_of_tenants[i].rent_charge == _amount);
-            }
-        }
     }
  
 }
