@@ -62,7 +62,7 @@ library Contract {
     
     struct PaymentInfo {
         mapping (address => Payment) payments_created;
-        mapping (uint => mapping(uint => address)) payed_too;
+        mapping (address => mapping(uint => address)) payments_made;
         uint[] total_payments;
     }
     
@@ -142,7 +142,8 @@ library Contract {
             address(0),
             msg.sender);
     }
-
+    
+    
 }
 
 contract BuildingsContract {
@@ -272,8 +273,11 @@ contract PaymentContract is TenantContract {
     uint24 MAX_PAYMENT_TERMS = 30 days;
     uint24 MIN_PAYMENT_TERMS = 1 days;
     
-    uint[] payments_made;
+    
     uint[] payments_created;
+    uint[] payments_made;
+    
+    mapping (address => mapping(uint => mapping(uint => address))) payments_finalised;
     
     
     function generatePayment(uint _amount, uint _timeLength) public returns (bool success) {
@@ -283,7 +287,7 @@ contract PaymentContract is TenantContract {
                     "The time allocated to the payment is less than or equal to the maximum payment terms of 30 days!");
         payment_info.createPayment(_amount, _timeLength);
         TOTAL_PAYMENTS_CREATED++;
-        payments_made.push(TOTAL_PAYMENTS_CREATED);
+        payments_created.push(TOTAL_PAYMENTS_CREATED);
         return success;
     }
     
@@ -297,13 +301,31 @@ contract PaymentContract is TenantContract {
     }
     
     function changeDetailsOfPayment(uint _payment, uint new_time, uint new_amount) public returns (bool) {
-        for (uint i = 0; i < payments_made.length; i++) {
-                if (payments_made[i] == _payment) {
-                    payment_info.changePaymentDetails(new_time, new_amount);
-                    return true;
-                }  
+        for (uint i = 0; i < payments_created.length; i++) {
+            if (payments_created[i] == _payment) {
+                payment_info.changePaymentDetails(new_time, new_amount);
+                return true;
+            }  
         }
         
+    }
+    
+    function finalisePayment(uint _amount, uint pay_num, uint _finish_date, address _too) public returns (bool success) {
+         for (uint i = 0; i < payments_created.length; i++) {
+             if (payments_created[i] == pay_num) {
+                 payment_info.payments_created[_too].payable_amount = _amount;
+                 payment_info.payments_created[_too].start_date = now;
+                 payment_info.payments_created[_too].finish_date = _finish_date;
+                 payment_info.payments_created[_too].payment_number = payments_created.length;
+                 payment_info.payments_created[_too].payed = true;
+                 payment_info.payments_created[_too].sender = msg.sender;
+                 payment_info.payments_created[_too].receiver = _too;
+                 payments_finalised[msg.sender][pay_num][_amount] = _too;
+                 TOTAL_PAYMENTS_MADE++;
+             }
+         }
+         payments_made.push(pay_num);
+         return success;
     }
 
 }
