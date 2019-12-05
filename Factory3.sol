@@ -144,3 +144,8 @@ contract Buildings {
     }
     
 }
+
+contract Tenant is Buildings {
+    
+    
+}
