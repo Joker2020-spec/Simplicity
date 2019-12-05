@@ -61,10 +61,9 @@ library Contract {
     }
     
     struct PaymentInfo {
-        Payment[] payments_made;
-        Payment[] payments_created;
-        mapping (address => mapping(uint => Payment)) payment_made;
+        mapping (address => Payment) payment_created;
         mapping (uint => mapping(uint => address)) payed_too;
+        uint[] total_payments;
     }
     
     struct MessageInfo {
@@ -118,10 +117,23 @@ library Contract {
             _isAuthorized,
             _key);
     }
+    
+    function createPayment(PaymentInfo storage payment, uint _amount, uint _time) internal {
+        payment.payment_created[msg.sender] = Payment(
+            _time, 
+            _amount, 
+            0, 
+            0, 
+            payment.total_payments.length, 
+            false, 
+            address(0),
+            msg.sender);
+        payment.total_payments.length++;    
+    }
 
 }
 
-contract Buildings {
+contract BuildingsContract {
     
     address public owner;
     uint public current_buildings = 0;
@@ -171,7 +183,7 @@ contract Buildings {
     
 }
 
-contract Tenant is Buildings {
+contract TenantContract is BuildingsContract {
     
     uint public TOTAL_AMOUNT_OF_TENANTS = 0;
     
@@ -231,5 +243,18 @@ contract Tenant is Buildings {
     function totalTenants() public view returns (uint) {
         return(list_of_tenants.length);
     }
+    
+}
+
+contract PaymentContract is TenantContract {
+    
+    uint8 NON_PAYMENT = 0;
+    uint public TOTAL_PAYMENTS_MADE = 0;
+    uint8 public TOTAL_PAYMENTS_CREATED = 0;
+    uint24 MAX_PAYMENT_TERMS = 30 days;
+    uint24 MIN_PAYMENT_TERMS = 1 days;
+    
+    uint[] payments_made;
+    uint[] payments_created;
     
 }
