@@ -118,9 +118,9 @@ library Contract {
             _key);
     }
     
-    function createPayment(PaymentInfo storage payment, uint _amount, uint _time) internal {
+    function createPayment(PaymentInfo storage payment, uint _amount, uint _timeLength) internal {
         payment.payment_created[msg.sender] = Payment(
-            _time, 
+            _timeLength, 
             _amount, 
             0, 
             0, 
@@ -248,6 +248,12 @@ contract TenantContract is BuildingsContract {
 
 contract PaymentContract is TenantContract {
     
+    using Contract for Contract.Payment;
+    using Contract for Contract.PaymentInfo;
+    
+    Contract.Payment payment;
+    Contract.PaymentInfo payment_info;
+    
     uint8 NON_PAYMENT = 0;
     uint public TOTAL_PAYMENTS_MADE = 0;
     uint8 public TOTAL_PAYMENTS_CREATED = 0;
@@ -256,5 +262,13 @@ contract PaymentContract is TenantContract {
     
     uint[] payments_made;
     uint[] payments_created;
+    
+    
+    function generatePayment(uint _amount, uint _timeLength) public returns (bool success) {
+        payment_info.createPayment(_amount, _timeLength);
+        TOTAL_PAYMENTS_CREATED++;
+        payments_made.push(TOTAL_PAYMENTS_CREATED);
+        return success;
+    }
     
 }
