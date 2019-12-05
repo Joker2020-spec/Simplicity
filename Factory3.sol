@@ -219,6 +219,14 @@ contract Tenant is Buildings {
         return true;
     }
     
+    function deAuthorizeTenant(address _key) public returns (bool) {
+        require(tenantInfo.tenants[_key].key == _key);
+        require(tenantInfo.tenants[_key].is_authorized == true);
+        tenantInfo.tenants[_key].is_authorized = false;
+        removeAuthorizedKey(_key);
+        return true;
+    }
+    
     function totalTenants() public view returns (uint) {
         return(list_of_tenants.length);
     }
