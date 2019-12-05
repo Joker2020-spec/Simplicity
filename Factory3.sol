@@ -52,7 +52,6 @@ library Contract {
     struct BuildingInfo {
         mapping (address => Building) owners;
         mapping (address => bool) authorized;
-        Building[] buildings;
     }
     
     struct TenantInfo {
