@@ -79,9 +79,10 @@ library Contract {
         Rule[] rules;
     }
     
-    function NewFactory(BuildingInfo storage build, string memory _name, uint maxlots, uint sizesqm, uint fire_exits, address _owner, address _manager) internal {
+    function NewFactory(BuildingInfo storage build, string memory _name, uint _buildNum, uint maxlots, uint sizesqm, uint fire_exits, address _owner, address _manager) internal {
         require (build.authorized[msg.sender] == true,
                     "The creator of the Factory is an authorzied key");
+        _buildNum = 0;            
         build.owners[msg.sender] = Building(
             _name,
             0,
@@ -136,7 +137,8 @@ contract Buildings {
     function newBuilding(string memory _name, uint maxlots, uint sizesqm, uint fire_exits, address _owner, address _manager) public returns (bool success) {
         require (max_buildings > buildings.length,
                         "The amount of buildings using the contract is not above the MAX LIMIT of 50");
-        buildingInfo.NewFactory(_name, buildings.length, sizesqm, fire_exits, _owner, _manager);          
+        buildingInfo.NewFactory(_name, buildings.length, maxlots, sizesqm, fire_exits, _owner, _manager);
+        return success;
     }
     
 }
