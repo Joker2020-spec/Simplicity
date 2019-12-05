@@ -7,8 +7,8 @@ contract Payments {
     
     
     uint NON_PAYMENT = 0;
-    uint TOTAL_PAYMENTS_MADE = 0;
-    uint TOTAL_PAYMENTS_CREATED = 0;
+    uint public TOTAL_PAYMENTS_MADE = 0;
+    uint public TOTAL_PAYMENTS_CREATED = 0;
     uint MAX_PAYMENT_TERMS = 30 days;
     uint MIN_PAYMENT_TERMS = 1 days;
     
@@ -30,27 +30,29 @@ contract Payments {
     mapping (uint => mapping(uint => address)) payed_too;
     
     function createPayment(uint _amount, uint _time) public returns (bool success) {
+        TOTAL_PAYMENTS_CREATED++;
         Payment memory payment = Payment({
             time: _time, 
             payable_amount: _amount, 
             start_date: 0, 
             finish_date: 0, 
-            payment_number: TOTAL_PAYMENTS_CREATED + 1, 
+            payment_number: TOTAL_PAYMENTS_CREATED, 
             payed: false, 
             sender: address(0),
             receiver: msg.sender
         });
-        TOTAL_PAYMENTS_CREATED + 1;
         payments_created.push(payment);
-        checkCreatorValid(payments_created.length);
+        // checkCreatorValid(payment.payment_number);
         return success;
     }
     
-    function getPaymentTerms(uint _payment) public view returns (uint, uint, uint, uint) {
+    function getPaymentTerms(uint _payment) public view returns (uint, uint, uint, uint, uint, bool) {
         return(payments_created[_payment].time,
                payments_created[_payment].payable_amount,
                payments_created[_payment].start_date,
-               payments_created[_payment].finish_date);
+               payments_created[_payment].finish_date,
+               payments_created[_payment].payment_number,
+               payments_created[_payment].payed);
     }
     
     function makePayment(uint _amount, uint pay_num, uint _finish_date, address _too) public returns (bool success) {
@@ -62,7 +64,7 @@ contract Payments {
         payment.payable_amount = _amount;
         payment.start_date = now;
         payment.finish_date = _finish_date;
-        payment.payment_number = TOTAL_PAYMENTS_MADE + 1;
+        payment.payment_number = TOTAL_PAYMENTS_MADE - 1;
         payment.payed = true;
         payment.sender = msg.sender;
         payment.receiver = _too;
@@ -91,7 +93,7 @@ contract Payments {
     }
     
     function checkTimePeriod(uint _payment) internal view {
-        require(payments_created[_payment].time > 1 days);
+        require(payments_created[_payment].time >= 1 days);
         require(payments_created[_payment].time <= 30 days);
     }
     
