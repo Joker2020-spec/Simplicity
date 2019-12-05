@@ -51,10 +51,11 @@ contract Payments {
                payments_created[_payment].finish_date);
     }
     
-    function makePayment(uint pay_num, uint _finish_date, address _too) public returns (bool success) {
+    function makePayment(uint _amount, uint pay_num, uint _finish_date, address _too) public returns (bool success) {
         checkAddress(_too);
         checkTimePeriod(pay_num);
         Payment storage payment = payments_created[pay_num];
+        payment.payable_amount = _amount;
         payment.start_date = now;
         payment.finish_date = _finish_date;
         payment.payment_number = TOTAL_PAYMENTS_MADE + 1;
@@ -89,5 +90,12 @@ contract Payments {
         require(payments_created[_payment].time > 1 days);
         require(payments_created[_payment].time <= 30 days);
     }
-
+    
+    function checkPayableAmount(uint _amount, uint _payment, address _too) internal view returns (bool) {
+        payments_created[_payment]
+        uint256 key = 
+        Tenant storage tent = list_of_tenants[]
+        
+    }
+ 
 }
