@@ -265,6 +265,10 @@ contract PaymentContract is TenantContract {
     
     
     function generatePayment(uint _amount, uint _timeLength) public returns (bool success) {
+        require (MIN_PAYMENT_TERMS <= _timeLength, 
+                    "The time allocated to the payment is greater or equal to the minimum payment terms!");
+        require (MAX_PAYMENT_TERMS >= _timeLength, 
+                    "The time allocated to the payment is less than or equal to the maximum payment terms!");
         payment_info.createPayment(_amount, _timeLength);
         TOTAL_PAYMENTS_CREATED++;
         payments_made.push(TOTAL_PAYMENTS_CREATED);
