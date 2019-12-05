@@ -3,7 +3,8 @@ pragma experimental ABIEncoderV2;
 
 import"./Untitled1.sol";
 
-contract Payments {
+contract Payments is TenantFactory {
+    
     
     uint NON_PAYMENT = 0;
     uint TOTAL_PAYMENTS_MADE = 0;
@@ -92,10 +93,13 @@ contract Payments {
     }
     
     function checkPayableAmount(uint _amount, uint _payment, address _too) internal view returns (bool) {
-        payments_created[_payment]
-        uint256 key = 
-        Tenant storage tent = list_of_tenants[]
-        
+        Payment storage pay = payments_created[_payment];
+        require (pay.payable_amount == _amount);
+        for (uint i = 0; i < list_of_tenants.length; i++) {
+            if (list_of_tenants[i].rent_charge == _amount) {
+                require (list_of_tenants[i].rent_charge == _amount);
+            }
+        }
     }
  
 }
