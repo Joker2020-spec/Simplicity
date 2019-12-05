@@ -107,7 +107,7 @@ library Contract {
         tenant.active_tenants[msg.sender] = true;
     }
     
-    function changeTenantDetails(TenantInfo storage tenant, uint _tenantNumber, string memory _name, uint _building, uint _lot, uint _rent, bool _owner, bool _active, bool _isAuthorized, address _key) internal {
+    function changeTenantDetails(TenantInfo storage tenant, string memory _name, uint _tenantNumber, uint _building, uint _lot, uint _rent, bool _owner, bool _active, bool _isAuthorized, address _key) internal {
         tenant.tenants[msg.sender] = Tenant(
             _name,
             _tenantNumber,
@@ -196,6 +196,10 @@ contract Tenant is Buildings {
         TOTAL_AMOUNT_OF_TENANTS++;
         list_of_tenants.push(TOTAL_AMOUNT_OF_TENANTS);
         return success;
+    }
+    
+    function changeDetailsOfTenant(string memory _name, uint _tenantNumber, uint _building, uint _lot, uint _rent, bool _owner, bool _active, bool _isAuthorized, address _key) public {
+        tenantInfo.changeTenantDetails(_name, _tenantNumber, _building, _lot, _rent, _owner, _active, _isAuthorized, _key);
     }
     
     function totalTenants() public view returns (uint) {
