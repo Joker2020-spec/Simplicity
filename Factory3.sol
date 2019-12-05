@@ -183,6 +183,10 @@ contract Tenant is Buildings {
         return success;
     }
     
+    function changeTenantDetails(uint _tenantNumber, string memory _name, uint _building, uint _lot, uint _rent, bool _owner, bool _active, address _key) public {
+        
+    }
+    
     function totalTenants() public view returns (uint) {
         return(list_of_tenants.length);
     }
