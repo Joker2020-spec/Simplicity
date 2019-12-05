@@ -57,7 +57,7 @@ library Contract {
     
     struct TenantInfo {
        mapping (address => Tenant) tenants;
-       mapping (address => mapping (uint => Building)) localised;
+       mapping (address => mapping (uint => uint)) localised;
        mapping (address => bool) active_tenants;
     }
     
@@ -104,6 +104,20 @@ library Contract {
             true,
             false,
             msg.sender);
+        tenant.active_tenants[msg.sender] = true;
+    }
+    
+    function changeTenantDetails(TenantInfo storage tenant, uint _tenantNumber, string memory _name, uint _building, uint _lot, uint _rent, bool _owner, bool _active, bool _isAuthorized, address _key) internal {
+        tenant.tenants[msg.sender] = Tenant(
+            _name,
+            _tenantNumber,
+            _building,
+            _lot,
+            _rent,
+            _owner,
+            _active,
+            _isAuthorized,
+            _key);
     }
 
 }
@@ -178,13 +192,10 @@ contract Tenant is Buildings {
     
     function addNewTenant(string memory _name, uint building_num,  uint _lot, uint _rent, bool _owner) public returns (bool success) {
         tenantInfo.newTenant(_name, list_of_tenants.length, building_num, _lot, _rent, _owner);
+        tenantInfo.localised[msg.sender][list_of_tenants.length] = building_num;
         TOTAL_AMOUNT_OF_TENANTS++;
         list_of_tenants.push(TOTAL_AMOUNT_OF_TENANTS);
         return success;
-    }
-    
-    function changeTenantDetails(uint _tenantNumber, string memory _name, uint _building, uint _lot, uint _rent, bool _owner, bool _active, address _key) public {
-        
     }
     
     function totalTenants() public view returns (uint) {
