@@ -197,8 +197,9 @@ contract Tenant is Buildings {
         return success;
     }
     
-    function changeDetailsOfTenant(string memory _name, uint _tenantNumber, uint _building, uint _lot, uint _rent, bool _owner, bool _active, bool _isAuthorized, address _key) public {
+    function changeDetailsOfTenant(string memory _name, uint _tenantNumber, uint _building, uint _lot, uint _rent, bool _owner, bool _active, bool _isAuthorized, address _key) public returns (bool success) {
         tenantInfo.changeTenantDetails(_name, _tenantNumber, _building, _lot, _rent, _owner, _active, _isAuthorized, _key);
+        return success;
     }
     
     function totalTenants() public view returns (uint) {
