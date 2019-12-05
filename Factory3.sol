@@ -202,6 +202,16 @@ contract Tenant is Buildings {
         return success;
     }
     
+    function getTenantInfo(address _key) public view returns (string memory, uint, uint, uint, bool, bool, address) {
+        return(tenantInfo.tenants[_key].name,
+               tenantInfo.tenants[_key].building,
+               tenantInfo.tenants[_key].lot,
+               tenantInfo.tenants[_key].rent_charge,
+               tenantInfo.tenants[_key].owner,
+               tenantInfo.tenants[_key].active,
+               tenantInfo.tenants[_key].key);
+    }
+    
     function totalTenants() public view returns (uint) {
         return(list_of_tenants.length);
     }
