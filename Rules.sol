@@ -5,11 +5,12 @@ import"./Untitled.sol";
 contract GovernanceFactory {
     
     using StateFactoryContract for StateFactoryContract.Building;
-    using StateFactoryContract for StateFactoryContract.Rule;
+    // using StateFactoryContract for StateFactoryContract.Rule;
     using StateFactoryContract for StateFactoryContract.RuleInfo;
     
     StateFactoryContract.Building Building;
     StateFactoryContract.RuleInfo rule_info;
+    //  StateFactoryContract.Rule rule;
     
     uint TOTAL_RULES_SET = 0;
     address OWNER;
