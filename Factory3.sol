@@ -282,10 +282,7 @@ contract PaymentContract is TenantContract {
     
     function generatePayment(uint _amount, uint _timeLength, address _too) public returns (bool success) {
         checkCreatorValid(_too);
-        require (MIN_PAYMENT_TERMS <= _timeLength, 
-                    "The time allocated to the payment is greater or equal to the minimum payment terms of 1 day!");
-        require (MAX_PAYMENT_TERMS >= _timeLength, 
-                    "The time allocated to the payment is less than or equal to the maximum payment terms of 30 days!");
+        checkTimePeriod(_timeLength);
         payment_info.createPayment(_amount, _timeLength);
         TOTAL_PAYMENTS_CREATED++;
         payments_created.push(TOTAL_PAYMENTS_CREATED);
@@ -313,6 +310,8 @@ contract PaymentContract is TenantContract {
     
     function finalisePayment(uint _amount, uint pay_num, uint _finish_date, address _too) public returns (bool success) {
         checkAddress(_too);
+        checkPaymentValid(_too);
+        checkPayableAmount(_amount, _too);
          for (uint i = 0; i < payments_created.length; i++) {
              if (payments_created[i] == pay_num) {
                  payment_info.payments_created[_too].payable_amount = _amount;
@@ -354,6 +353,23 @@ contract PaymentContract is TenantContract {
     function checkCreatorValid(address _too) internal view {
         require(payment_info.payments_created[_too].receiver == msg.sender,
                     "The creator of the payment is the address that will receive the payment");
+    }
+    
+    function checkTimePeriod(uint _timeLength) internal view {
+        require (MIN_PAYMENT_TERMS <= _timeLength, 
+                    "The time allocated to the payment is greater or equal to the minimum payment terms of 1 day!");
+        require (MAX_PAYMENT_TERMS >= _timeLength, 
+                    "The time allocated to the payment is less than or equal to the maximum payment terms of 30 days!");
+    }
+    
+    function checkPaymentValid(address _too) internal view {
+        require(payment_info.payments_created[_too].payed == false,
+                    "The payment has not executed yet");
+    }
+    
+    function checkPayableAmount(uint _amount, address _too) internal view {
+        require (payment_info.payments_created[_too].payable_amount == _amount, 
+                    "The amount due against the payment is equal to the value being sent");
     }
 
 }
