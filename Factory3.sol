@@ -335,7 +335,9 @@ contract PaymentContract is TenantContract {
                payment_info.payments_created[_too].start_date,
                payment_info.payments_created[_too].finish_date,
                payment_info.payments_created[_too].payment_number,
-               payment_info.payments_created[_too].payed);
+               // payment_info.payments_created[_too].payed,
+               payment_info.payments_created[_too].sender,
+               payment_info.payments_created[_too].receiver);
     }
 
 }
