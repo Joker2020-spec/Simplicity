@@ -10,7 +10,7 @@ pragma solidity ^0.5.12;
 // the maximum has been reached a new instance will have to be deployed, to ensure the safety and integrity of both
 // the users data and the secuirty of the smart contract. 
 //
-//  Connor Wiseman / The MIT Licence.
+// (c) Connor Wiseman / The MIT Licence.
 //
 //-------------------------------------------------------------------------------------------------------------------
 
