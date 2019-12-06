@@ -1,6 +1,7 @@
 pragma solidity ^0.5.12;
+// pragma experimental ABIEncoderV2;
 
-import"./Untitled.sol";
+import"./Untitled1.sol";
 
 contract GovernanceFactory {
     
@@ -28,10 +29,15 @@ contract GovernanceFactory {
     }
     
     function setNewRule(string memory _rule, address[] memory _instructors, uint _buildNumber) public isOwnerOrManager(_buildNumber) returns (bool rule_set) {
-        rule_info.newRule(_rule, _instructors, _buildNumber);
+        rule_info.newRule(rule_info.rulings.length, _rule, _instructors, _buildNumber);
         TOTAL_RULES_SET++;
         total_rules.push(TOTAL_RULES_SET);
         return rule_set;
     }
+    
+    function getRule(uint rule_num) public view returns (bytes memory) {
+        return(rule_info.rulings[rule_num]);
+    }
+    
     
 } 
