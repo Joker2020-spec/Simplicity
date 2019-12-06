@@ -320,12 +320,22 @@ contract PaymentContract is TenantContract {
                  payment_info.payments_created[_too].payed = true;
                  payment_info.payments_created[_too].sender = msg.sender;
                  payment_info.payments_created[_too].receiver = _too;
-                 payments_finalised[msg.sender][pay_num][_amount] = _too;
+                 payments_finalised[msg.sender][pay_num][_finish_date] = _too;
+                 payment_info.payments_made[msg.sender][pay_num] = _too;
                  TOTAL_PAYMENTS_MADE++;
              }
          }
          payments_made.push(pay_num);
          return success;
+    }
+    
+    function getFinalisedPayment(address _too) public view returns (uint, uint, uint, uint, address, address) {
+        return(
+               payment_info.payments_created[_too].payable_amount,
+               payment_info.payments_created[_too].start_date,
+               payment_info.payments_created[_too].finish_date,
+               payment_info.payments_created[_too].payment_number,
+               payment_info.payments_created[_too].payed);
     }
 
 }
