@@ -1,5 +1,21 @@
 pragma solidity ^0.5.12;
 
+//-------------------------------------------------------------------------------------------------------------------
+//
+// "Simplicity Management Systems Operations".
+//
+// The following code is for data management and general interaction between building and tennats of public, private  
+// and civil estate, allowing them to verify, authenticate and interact with the building, the management team and
+// eachother. The scripts will allow for a "maximum of 50" buildings to operate under a single smart contract, once 
+// the maximum has been reached a new instance will have to be deployed, to ensure the safety and integrity of both
+// the users data and the secuirty of the smart contract. 
+//
+//
+//
+//
+//
+//-------------------------------------------------------------------------------------------------------------------
+
 library Contract {
     
     struct Building {
@@ -152,10 +168,10 @@ contract BuildingsContract {
     uint public current_buildings = 0;
     uint public max_buildings = 50;
     
-    using Contract for Contract.Building;
+    // using Contract for Contract.Building;
     using Contract for Contract.BuildingInfo;
     
-    Contract infomation;
+    // Contract infomation;
     Contract.Building Building;
     Contract.BuildingInfo buildingInfo;
     
@@ -200,11 +216,11 @@ contract TenantContract is BuildingsContract {
     
     uint public TOTAL_AMOUNT_OF_TENANTS = 0;
     
-    using Contract for Contract.Tenant;
+    // using Contract for Contract.Tenant;
     using Contract for Contract.TenantInfo;
     
     
-    Contract.Tenant tenant;
+    // Contract.Tenant tenant;
     Contract.TenantInfo tenantInfo;
     
     uint[] list_of_tenants;
@@ -261,10 +277,10 @@ contract TenantContract is BuildingsContract {
 
 contract PaymentContract is TenantContract {
     
-    using Contract for Contract.Payment;
+    // using Contract for Contract.Payment;
     using Contract for Contract.PaymentInfo;
     
-    Contract.Payment payment;
+    // Contract.Payment payment;
     Contract.PaymentInfo payment_info;
     
     uint8 NON_PAYMENT = 0;
