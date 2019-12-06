@@ -10,13 +10,17 @@ pragma solidity ^0.5.12;
 // the maximum has been reached a new instance will have to be deployed, to ensure the safety and integrity of both
 // the users data and the secuirty of the smart contract. 
 //
-//
-//
-//
+//  Connor Wiseman / The MIT Licence.
 //
 //-------------------------------------------------------------------------------------------------------------------
 
-library Contract {
+
+/** 
+  * @Title - State Factory Contract (Library)
+  * @Info - The State Factory (Library) Contract will generate and store and the nessascary data 
+  */ 
+
+library StateFactoryContract {
     
     struct Building {
         string build_name;
@@ -168,10 +172,10 @@ contract BuildingsContract {
     uint public current_buildings = 0;
     uint public max_buildings = 50;
     
-    // using Contract for Contract.Building;
+    using Contract for Contract.Building;
     using Contract for Contract.BuildingInfo;
     
-    // Contract infomation;
+    Contract infomation;
     Contract.Building Building;
     Contract.BuildingInfo buildingInfo;
     
