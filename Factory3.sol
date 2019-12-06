@@ -16,11 +16,20 @@ pragma solidity ^0.5.12;
 
 
 /** 
-  * @Title - State Factory Contract (Library)
-  * @Info - The State Factory (Library) Contract will generate and store and the nessascary data 
+  * @title - State Factory Contract (Library)
+  * @author - Connor Wiseman.
+  * @notice - The State Factory (Library) Contract will generate and store and the nessascary data needed for general 
+  *           purpose interactions with "Simplicity Management Systems Operations". These will include logging a state
+  *           for each building, user and other general parameters of the application. 
+  * @dev - All data stored within the StateFactoryContract "library" can be accessed via the inherited contracts that 
+  *        will get deployed to the blockchain. 
   */ 
 
 library StateFactoryContract {
+    
+    /**
+      *@dev - Data being kept against each factory created by the contract.
+      */  
     
     struct Building {
         string build_name;
@@ -31,6 +40,10 @@ library StateFactoryContract {
         address owner;
         address manager;
     }
+    
+     /**
+      *@dev - Data being kept against each tenant interacting with the contract. 
+      */  
     
      struct Tenant {
         string name;
@@ -44,6 +57,10 @@ library StateFactoryContract {
         address key;
     }
     
+    /**
+      *@dev - Data being kept against each payment being made through the contract.
+      */  
+    
     struct Payment {
         uint time;
         uint payable_amount;
@@ -55,11 +72,19 @@ library StateFactoryContract {
         address receiver;
     }
     
+    /**
+      *@dev - Data being kept against each message being sent through the contract.
+      */  
+    
      struct Message {
         bytes message;
         address from;
         address too;
     }
+    
+    /**
+      *@dev - Data being kept against each rule that is stored in the contract.
+      */  
     
     struct Rule {
         uint building;
@@ -69,10 +94,24 @@ library StateFactoryContract {
         bool active;
     }
     
+    /**
+      *@dev - Data storage for each building and the creator of the factory along with the
+      *       authorized members of each building. (Authorized members can access specific
+      *       functions allocated to management purposes)
+      */  
+    
     struct BuildingInfo {
         mapping (address => Building) owners;
         mapping (address => bool) authorized;
     }
+    
+    /**
+      *@dev - Data storage for each tenant using the contract.
+      *@dev - "tenants" is a 1 on 1 of address to profile storage.
+      *@dev - "localised" is 1 on 1 of each address linked to their unique number given to 
+      *        each tenant and the building of residence.
+      *@dev - "active_tenants" is another 1 to 1 of authentication of active addresses.
+      */  
     
     struct TenantInfo {
        mapping (address => Tenant) tenants;
@@ -172,12 +211,12 @@ contract BuildingsContract {
     uint public current_buildings = 0;
     uint public max_buildings = 50;
     
-    using Contract for Contract.Building;
-    using Contract for Contract.BuildingInfo;
+    using StateFactoryContract for StateFactoryContract.Building;
+    using StateFactoryContract for StateFactoryContract.BuildingInfo;
     
-    Contract infomation;
-    Contract.Building Building;
-    Contract.BuildingInfo buildingInfo;
+    StateFactoryContract infomation;
+    StateFactoryContract.Building Building;
+    StateFactoryContract.BuildingInfo buildingInfo;
     
     uint[] buildings;
     
@@ -221,11 +260,11 @@ contract TenantContract is BuildingsContract {
     uint public TOTAL_AMOUNT_OF_TENANTS = 0;
     
     // using Contract for Contract.Tenant;
-    using Contract for Contract.TenantInfo;
+    using StateFactoryContract for StateFactoryContract.TenantInfo;
     
     
     // Contract.Tenant tenant;
-    Contract.TenantInfo tenantInfo;
+    StateFactoryContract.TenantInfo tenantInfo;
     
     uint[] list_of_tenants;
     
@@ -282,10 +321,10 @@ contract TenantContract is BuildingsContract {
 contract PaymentContract is TenantContract {
     
     // using Contract for Contract.Payment;
-    using Contract for Contract.PaymentInfo;
+    using StateFactoryContract for StateFactoryContract.PaymentInfo;
     
     // Contract.Payment payment;
-    Contract.PaymentInfo payment_info;
+    StateFactoryContract.PaymentInfo payment_info;
     
     uint8 NON_PAYMENT = 0;
     uint public TOTAL_PAYMENTS_MADE = 0;
