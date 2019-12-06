@@ -329,13 +329,12 @@ contract PaymentContract is TenantContract {
          return success;
     }
     
-    function getFinalisedPayment(address _too) public view returns (uint, uint, uint, uint, address, address) {
-        return(
-               payment_info.payments_created[_too].payable_amount,
+    function getFinalisedPayment(address _too) public view returns (uint, uint, uint, uint, bool, address, address) {
+        return(payment_info.payments_created[_too].payable_amount,
                payment_info.payments_created[_too].start_date,
                payment_info.payments_created[_too].finish_date,
                payment_info.payments_created[_too].payment_number,
-               // payment_info.payments_created[_too].payed,
+               payment_info.payments_created[_too].payed,
                payment_info.payments_created[_too].sender,
                payment_info.payments_created[_too].receiver);
     }
