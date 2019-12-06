@@ -277,10 +277,11 @@ contract PaymentContract is TenantContract {
     uint[] payments_created;
     uint[] payments_made;
     
-    mapping (address => mapping(uint => mapping(uint => address))) payments_finalised;
+    mapping (address => mapping(uint => mapping(uint => mapping(address => bool)))) payments_finalised;
     
     
-    function generatePayment(uint _amount, uint _timeLength) public returns (bool success) {
+    function generatePayment(uint _amount, uint _timeLength, address _too) public returns (bool success) {
+        checkCreatorValid(_too);
         require (MIN_PAYMENT_TERMS <= _timeLength, 
                     "The time allocated to the payment is greater or equal to the minimum payment terms of 1 day!");
         require (MAX_PAYMENT_TERMS >= _timeLength, 
@@ -311,6 +312,7 @@ contract PaymentContract is TenantContract {
     }
     
     function finalisePayment(uint _amount, uint pay_num, uint _finish_date, address _too) public returns (bool success) {
+        checkAddress(_too);
          for (uint i = 0; i < payments_created.length; i++) {
              if (payments_created[i] == pay_num) {
                  payment_info.payments_created[_too].payable_amount = _amount;
@@ -320,7 +322,7 @@ contract PaymentContract is TenantContract {
                  payment_info.payments_created[_too].payed = true;
                  payment_info.payments_created[_too].sender = msg.sender;
                  payment_info.payments_created[_too].receiver = _too;
-                 payments_finalised[msg.sender][pay_num][_finish_date] = _too;
+                 payments_finalised[msg.sender][pay_num][_amount][_too] = true;
                  payment_info.payments_made[msg.sender][pay_num] = _too;
                  TOTAL_PAYMENTS_MADE++;
              }
@@ -337,6 +339,21 @@ contract PaymentContract is TenantContract {
                payment_info.payments_created[_too].payed,
                payment_info.payments_created[_too].sender,
                payment_info.payments_created[_too].receiver);
+    }
+    
+    function isPaymentFinalised(address _from, address _too, uint _amount, uint _payNum) public view returns (bool) {
+        return(payments_finalised[_from][_payNum][_amount][_too]);
+    }
+    
+    function checkAddress(address _too) internal view {
+        if (msg.sender == _too) {
+            revert("The sender and receiver have the same address");
+        }
+    }
+    
+    function checkCreatorValid(address _too) internal view {
+        require(payment_info.payments_created[_too].receiver == msg.sender,
+                    "The creator of the payment is the address that will receive the payment");
     }
 
 }
