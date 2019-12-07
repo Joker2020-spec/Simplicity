@@ -142,15 +142,8 @@ library StateFactoryContract {
     }
     
     function changePaymentDetails(PaymentInfo storage payment, uint new_time, uint new_amount, uint _payNum) internal {
-        payment.payments_created[msg.sender][_payNum] = Payment(
-            new_time, 
-            new_amount, 
-            0, 
-            0, 
-            _payNum, 
-            false, 
-            address(0),
-            msg.sender);
+        payment.payments_created[msg.sender][_payNum].time = new_time;
+        payment.payments_created[msg.sender][_payNum].payable_amount = new_amount;
     }
     
     function newRule(RuleInfo storage rule, uint _rule_num, string memory _rule, address[] memory _instructors, uint _buildNumber) internal {
