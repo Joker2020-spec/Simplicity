@@ -128,6 +128,7 @@ library StateFactoryContract {
     }
     
     function createPayment(PaymentInfo storage payment, uint _amount, uint _timeLength) internal {
+        payment.total_payments.length++;
         uint payment_num = payment.total_payments.length;
         payment.payments_created[msg.sender][payment_num] = Payment(
             _timeLength, 
@@ -138,7 +139,6 @@ library StateFactoryContract {
             false, 
             address(0),
             msg.sender);
-        payment.total_payments.length++;    
     }
     
     function changePaymentDetails(PaymentInfo storage payment, uint new_time, uint new_amount, uint _payNum) internal {
@@ -147,7 +147,7 @@ library StateFactoryContract {
             new_amount, 
             0, 
             0, 
-            payment.total_payments.length, 
+            _payNum, 
             false, 
             address(0),
             msg.sender);
@@ -307,14 +307,12 @@ contract PaymentContract is TenantContract {
     mapping (address => mapping(uint => mapping(uint => mapping(address => bool)))) payments_finalised;
     
     
-    function generatePayment(uint _amount, uint _timeLength) public returns (bool success) {
-        // checkCreatorValid();
+    function generatePayment(uint _amount, uint _timeLength) public returns (bool success, uint payment_number) {
         checkTimePeriod(_timeLength);
         payment_info.createPayment(_amount, _timeLength);
         TOTAL_PAYMENTS_CREATED++;
         payments_created.push(TOTAL_PAYMENTS_CREATED);
-        checkCreatorValid(payments_created.length);
-        return success;
+        return (success, payments_created.length);
     }
     
     function getPaymentDetails(address _key, uint _payment_number) public view returns (uint, uint, uint, uint, uint, bool) {
