@@ -114,8 +114,8 @@ library StateFactoryContract {
         tenant.active_tenants[msg.sender] = true;
     }
     
-    function changeTenantDetails(TenantInfo storage tenant, string memory _name, uint _tenantNumber, uint _building, uint _lot, uint _rent, bool _owner, bool _active, bool _isAuthorized, address _key) internal {
-        tenant.tenants[msg.sender] = Tenant(
+    function changeTenantDetails(TenantInfo storage tenant, string memory _name, uint _tenantNumber, uint _building, uint _lot, uint _rent, bool _owner, bool _active, address _key) internal {
+        tenant.tenants[_key] = Tenant(
             _name,
             _tenantNumber,
             _building,
@@ -123,7 +123,7 @@ library StateFactoryContract {
             _rent,
             _owner,
             _active,
-            _isAuthorized,
+            false,
             _key);
     }
     
@@ -244,19 +244,24 @@ contract TenantContract is BuildingsContract {
         return success;
     }
     
-    function changeDetailsOfTenant(string memory _name, uint _tenantNumber, uint _building, uint _lot, uint _rent, bool _owner, bool _active, bool _isAuthorized, address _key) public returns (bool success) {
-        tenantInfo.changeTenantDetails(_name, _tenantNumber, _building, _lot, _rent, _owner, _active, _isAuthorized, _key);
+    function changeDetailsOfTenant(string memory _name, uint _building, uint _lot, uint _rent, bool _owner, bool _active, address _key) public returns (bool success) {
+        tenantInfo.changeTenantDetails(_name, list_of_tenants.length, _building, _lot, _rent, _owner, _active, _key);
         return success;
     }
     
-    function getTenantInfo(address _key) public view returns (string memory, uint, uint, uint, bool, bool, address) {
+    function getTenantBasicInfo(address _key) public view returns (string memory, uint, uint, uint, bool, address) {
         return(tenantInfo.tenants[_key].name,
                tenantInfo.tenants[_key].tenant_number,
                tenantInfo.tenants[_key].building,
                tenantInfo.tenants[_key].lot,
-               tenantInfo.tenants[_key].owner,
                tenantInfo.tenants[_key].active,
                tenantInfo.tenants[_key].key);
+    }
+    
+    function getTenantPrivateInfo(address _key) public view returns (uint, bool, bool) {
+        return(tenantInfo.tenants[_key].rent_charge,
+               tenantInfo.tenants[_key].owner,
+               tenantInfo.tenants[_key].is_authorized);
     }
     
     function authorizeTenant(address _key) public returns (bool) {
