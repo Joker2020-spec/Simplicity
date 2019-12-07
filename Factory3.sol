@@ -70,7 +70,7 @@ library StateFactoryContract {
     }
     
     struct PaymentInfo {
-        mapping (address => Payment) payments_created;
+        mapping (address => mapping (uint => Payment)) payments_created;
         mapping (address => mapping(uint => address)) payments_made;
         uint[] total_payments;
     }
@@ -128,7 +128,8 @@ library StateFactoryContract {
     }
     
     function createPayment(PaymentInfo storage payment, uint _amount, uint _timeLength) internal {
-        payment.payments_created[msg.sender] = Payment(
+        uint payment_num = payment.total_payments.length;
+        payment.payments_created[msg.sender][payment_num] = Payment(
             _timeLength, 
             _amount, 
             0, 
@@ -140,8 +141,8 @@ library StateFactoryContract {
         payment.total_payments.length++;    
     }
     
-    function changePaymentDetails(PaymentInfo storage payment, uint new_time, uint new_amount) internal {
-        payment.payments_created[msg.sender] = Payment(
+    function changePaymentDetails(PaymentInfo storage payment, uint new_time, uint new_amount, uint _payNum) internal {
+        payment.payments_created[msg.sender][_payNum] = Payment(
             new_time, 
             new_amount, 
             0, 
@@ -306,28 +307,29 @@ contract PaymentContract is TenantContract {
     mapping (address => mapping(uint => mapping(uint => mapping(address => bool)))) payments_finalised;
     
     
-    function generatePayment(uint _amount, uint _timeLength, address _too) public returns (bool success) {
-        checkCreatorValid(_too);
+    function generatePayment(uint _amount, uint _timeLength) public returns (bool success) {
+        // checkCreatorValid();
         checkTimePeriod(_timeLength);
         payment_info.createPayment(_amount, _timeLength);
         TOTAL_PAYMENTS_CREATED++;
         payments_created.push(TOTAL_PAYMENTS_CREATED);
+        checkCreatorValid(payments_created.length);
         return success;
     }
     
-    function getPaymentDetails(address _key) public view returns (uint, uint, uint, uint, uint, bool) {
-        return(payment_info.payments_created[_key].time,
-               payment_info.payments_created[_key].payable_amount,
-               payment_info.payments_created[_key].start_date,
-               payment_info.payments_created[_key].finish_date,
-               payment_info.payments_created[_key].payment_number,
-               payment_info.payments_created[_key].payed);
+    function getPaymentDetails(address _key, uint _payment_number) public view returns (uint, uint, uint, uint, uint, bool) {
+        return(payment_info.payments_created[_key][_payment_number].time,
+               payment_info.payments_created[_key][_payment_number].payable_amount,
+               payment_info.payments_created[_key][_payment_number].start_date,
+               payment_info.payments_created[_key][_payment_number].finish_date,
+               payment_info.payments_created[_key][_payment_number].payment_number,
+               payment_info.payments_created[_key][_payment_number].payed);
     }
     
     function changeDetailsOfPayment(uint _payment, uint new_time, uint new_amount) public returns (bool) {
         for (uint i = 0; i < payments_created.length; i++) {
             if (payments_created[i] == _payment) {
-                payment_info.changePaymentDetails(new_time, new_amount);
+                payment_info.changePaymentDetails(_payment, new_time, new_amount);
                 return true;
             }  
         }
@@ -336,17 +338,17 @@ contract PaymentContract is TenantContract {
     
     function finalisePayment(uint _amount, uint pay_num, uint _finish_date, address _too) public returns (bool success) {
         checkAddress(_too);
-        checkPaymentValid(_too);
-        checkPayableAmount(_amount, _too);
+        checkPaymentValid(_too, pay_num);
+        checkPayableAmount(_amount, pay_num, _too);
          for (uint i = 0; i < payments_created.length; i++) {
              if (payments_created[i] == pay_num) {
-                 payment_info.payments_created[_too].payable_amount = _amount;
-                 payment_info.payments_created[_too].start_date = now;
-                 payment_info.payments_created[_too].finish_date = _finish_date;
-                 payment_info.payments_created[_too].payment_number = payments_created.length;
-                 payment_info.payments_created[_too].payed = true;
-                 payment_info.payments_created[_too].sender = msg.sender;
-                 payment_info.payments_created[_too].receiver = _too;
+                 payment_info.payments_created[_too][pay_num].payable_amount = _amount;
+                 payment_info.payments_created[_too][pay_num].start_date = now;
+                 payment_info.payments_created[_too][pay_num].finish_date = _finish_date;
+                 payment_info.payments_created[_too][pay_num].payment_number = payments_created.length;
+                 payment_info.payments_created[_too][pay_num].payed = true;
+                 payment_info.payments_created[_too][pay_num].sender = msg.sender;
+                 payment_info.payments_created[_too][pay_num].receiver = _too;
                  payments_finalised[msg.sender][pay_num][_amount][_too] = true;
                  payment_info.payments_made[msg.sender][pay_num] = _too;
                  TOTAL_PAYMENTS_MADE++;
@@ -356,14 +358,13 @@ contract PaymentContract is TenantContract {
          return success;
     }
     
-    function getFinalisedPayment(address _too) public view returns (uint, uint, uint, uint, bool, address, address) {
-        return(payment_info.payments_created[_too].payable_amount,
-               payment_info.payments_created[_too].start_date,
-               payment_info.payments_created[_too].finish_date,
-               payment_info.payments_created[_too].payment_number,
-               payment_info.payments_created[_too].payed,
-               payment_info.payments_created[_too].sender,
-               payment_info.payments_created[_too].receiver);
+    function getFinalisedPayment(address _too, uint pay_num) public view returns (uint, uint, uint, bool, address, address) {
+        return(payment_info.payments_created[_too][pay_num].payable_amount,
+               payment_info.payments_created[_too][pay_num].start_date,
+               payment_info.payments_created[_too][pay_num].finish_date,
+               payment_info.payments_created[_too][pay_num].payed,
+               payment_info.payments_created[_too][pay_num].sender,
+               payment_info.payments_created[_too][pay_num].receiver);
     }
     
     function isPaymentFinalised(address _from, address _too, uint _amount, uint _payNum) public view returns (bool) {
@@ -376,8 +377,8 @@ contract PaymentContract is TenantContract {
         }
     }
     
-    function checkCreatorValid(address _too) internal view {
-        require(payment_info.payments_created[_too].receiver == msg.sender,
+    function checkCreatorValid(uint pay_num) internal view {
+        require(payment_info.payments_created[msg.sender][pay_num].receiver == msg.sender,
                     "The creator of the payment is the address that will receive the payment");
     }
     
@@ -388,13 +389,13 @@ contract PaymentContract is TenantContract {
                     "The time allocated to the payment is less than or equal to the maximum payment terms of 30 days!");
     }
     
-    function checkPaymentValid(address _too) internal view {
-        require(payment_info.payments_created[_too].payed == false,
+    function checkPaymentValid(address _too, uint pay_num) internal view {
+        require(payment_info.payments_created[_too][pay_num].payed == false,
                     "The payment has not executed yet");
     }
     
-    function checkPayableAmount(uint _amount, address _too) internal view {
-        require (payment_info.payments_created[_too].payable_amount == _amount, 
+    function checkPayableAmount(uint _amount, uint pay_num, address _too) internal view {
+        require (payment_info.payments_created[_too][pay_num].payable_amount == _amount, 
                     "The amount due against the payment is equal to the value being sent");
     }
 
