@@ -317,10 +317,10 @@ contract PaymentContract is TenantContract {
                payment_info.payments_created[_key][_payment_number].payed);
     }
     
-    function changeDetailsOfPayment(uint _payment, uint new_time, uint new_amount) public returns (bool) {
+    function changeDetailsOfPayment(uint new_time, uint new_amount, uint _payment) public returns (bool) {
         for (uint i = 0; i < payments_created.length; i++) {
             if (payments_created[i] == _payment) {
-                payment_info.changePaymentDetails(_payment, new_time, new_amount);
+                payment_info.changePaymentDetails(new_time, new_amount, _payment);
                 return true;
             }  
         }
