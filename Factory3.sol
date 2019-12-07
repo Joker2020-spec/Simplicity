@@ -1,35 +1,8 @@
 pragma solidity ^0.5.12;
 
-//-------------------------------------------------------------------------------------------------------------------
-//
-// "Simplicity Management Systems Operations".
-//
-// The following code is for data management and general interaction between building and tennats of public, private  
-// and civil estate, allowing them to verify, authenticate and interact with the building, the management team and
-// eachother. The scripts will allow for a "maximum of 50" buildings to operate under a single smart contract, once 
-// the maximum has been reached a new instance will have to be deployed, to ensure the safety and integrity of both
-// the users data and the secuirty of the smart contract. 
-//
-// (c) Connor Wiseman / The MIT Licence.
-//
-//-------------------------------------------------------------------------------------------------------------------
-
-
-/** 
-  * @title - State Factory Contract (Library)
-  * @author - Connor Wiseman.
-  * @notice - The State Factory (Library) Contract will generate and store and the nessascary data needed for general 
-  *           purpose interactions with "Simplicity Management Systems Operations". These will include logging a state
-  *           for each building, user and other general parameters of the application. 
-  * @dev - All data stored within the StateFactoryContract "library" can be accessed via the inherited contracts that 
-  *        will get deployed to the blockchain. 
-  */ 
 
 library StateFactoryContract {
     
-    /**
-      *@dev - Data being kept against each factory created by the contract.
-      */  
     
     struct Building {
         string build_name;
@@ -40,10 +13,7 @@ library StateFactoryContract {
         address owner;
         address manager;
     }
-    
-     /**
-      *@dev - Data being kept against each tenant interacting with the contract. 
-      */  
+      
     
      struct Tenant {
         string name;
@@ -57,10 +27,7 @@ library StateFactoryContract {
         address key;
     }
     
-    /**
-      *@dev - Data being kept against each payment being made through the contract.
-      */  
-    
+   
     struct Payment {
         uint time;
         uint payable_amount;
@@ -72,20 +39,14 @@ library StateFactoryContract {
         address receiver;
     }
     
-    /**
-      *@dev - Data being kept against each message being sent through the contract.
-      */  
-    
+   
      struct Message {
         bytes message;
         address from;
         address too;
     }
     
-    /**
-      *@dev - Data being kept against each rule that is stored in the contract.
-      */  
-    
+   
     struct Rule {
         uint building;
         uint rule_number;
@@ -94,26 +55,14 @@ library StateFactoryContract {
         bytes rule;
         bool active;
     }
-    
-    /**
-      *@dev - Data storage for each building and the creator of the factory along with the
-      *       authorized members of each building. (Authorized members can access specific
-      *       functions allocated to management purposes)
-      */  
-    
+   
+   
     struct BuildingInfo {
         mapping (address => Building) owners;
         mapping (address => bool) authorized;
     }
     
-    /**
-      *@dev - Data storage for each tenant using the contract.
-      *@dev - "tenants" is a 1 on 1 of address to profile storage.
-      *@dev - "localised" is 1 on 1 of each address linked to their unique number given to 
-      *        each tenant and the building of residence.
-      *@dev - "active_tenants" is another 1 to 1 of authentication of active addresses.
-      */  
-    
+   
     struct TenantInfo {
        mapping (address => Tenant) tenants;
        mapping (address => mapping (uint => uint)) localised;
@@ -152,7 +101,6 @@ library StateFactoryContract {
     }
     
     function newTenant(TenantInfo storage tenant, string memory _name, uint _tenantNum, uint building_num,  uint _lot, uint _rent, bool _owner) internal {
-        _tenantNum = 0;
         tenant.tenants[msg.sender] = Tenant(
             _name,
             _tenantNum,
@@ -242,17 +190,11 @@ contract BuildingsContract {
     }
     
     modifier isAuthorized() {
-        require (buildingInfo.authorized[msg.sender] = true, "Check to see if the key calling the function is authorized to do so!");
+        require (buildingInfo.authorized[msg.sender] = true, 
+                    "Check to see if the key calling the function is authorized to do so!");
         _;
     }
     
-    function addAuthorizedKey(address newkey) internal {
-        buildingInfo.authorized[newkey] = true;
-    }
-    
-    function removeAuthorizedKey(address badKey) internal {
-        buildingInfo.authorized[badKey] = false;
-    }
     
     function newBuilding(string memory _name, uint maxlots, uint sizesqm, uint fire_exits, address _owner, address _manager) public returns (bool success) {
         require (max_buildings > buildings.length,
@@ -263,20 +205,30 @@ contract BuildingsContract {
         return success;
     }
     
+    function addAuthorizedKey(address newkey) internal {
+        buildingInfo.authorized[newkey] = true;
+    }
+    
+    function removeAuthorizedKey(address badKey) internal {
+        buildingInfo.authorized[badKey] = false;
+    }
+    
 }
 
 contract TenantContract is BuildingsContract {
     
+    
     uint public TOTAL_AMOUNT_OF_TENANTS = 0;
     
-    // using Contract for Contract.Tenant;
+    
     using StateFactoryContract for StateFactoryContract.TenantInfo;
     
     
-    // Contract.Tenant tenant;
     StateFactoryContract.TenantInfo tenantInfo;
     
+    
     uint[] list_of_tenants;
+    
     
      modifier isActive() {
         require (tenantInfo.active_tenants[msg.sender] == true,
@@ -285,10 +237,10 @@ contract TenantContract is BuildingsContract {
     }
     
     function addNewTenant(string memory _name, uint building_num,  uint _lot, uint _rent, bool _owner) public returns (bool success) {
-        tenantInfo.newTenant(_name, list_of_tenants.length, building_num, _lot, _rent, _owner);
-        tenantInfo.localised[msg.sender][list_of_tenants.length] = building_num;
         TOTAL_AMOUNT_OF_TENANTS++;
         list_of_tenants.push(TOTAL_AMOUNT_OF_TENANTS);
+        tenantInfo.localised[msg.sender][list_of_tenants.length] = building_num;
+        tenantInfo.newTenant(_name, list_of_tenants.length, building_num, _lot, _rent, _owner);
         return success;
     }
     
@@ -299,9 +251,9 @@ contract TenantContract is BuildingsContract {
     
     function getTenantInfo(address _key) public view returns (string memory, uint, uint, uint, bool, bool, address) {
         return(tenantInfo.tenants[_key].name,
+               tenantInfo.tenants[_key].tenant_number,
                tenantInfo.tenants[_key].building,
                tenantInfo.tenants[_key].lot,
-               tenantInfo.tenants[_key].rent_charge,
                tenantInfo.tenants[_key].owner,
                tenantInfo.tenants[_key].active,
                tenantInfo.tenants[_key].key);
@@ -330,10 +282,10 @@ contract TenantContract is BuildingsContract {
 
 contract PaymentContract is TenantContract {
     
-    // using Contract for Contract.Payment;
+    
     using StateFactoryContract for StateFactoryContract.PaymentInfo;
     
-    // Contract.Payment payment;
+    
     StateFactoryContract.PaymentInfo payment_info;
     
     uint8 NON_PAYMENT = 0;
