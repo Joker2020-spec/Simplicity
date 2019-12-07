@@ -230,9 +230,9 @@ contract TenantContract is BuildingsContract {
     uint[] list_of_tenants;
     
     
-     modifier isActive() {
-        require (tenantInfo.active_tenants[msg.sender] == true,
-                    "Check to ensure that the key calling the function is active with contract");
+     modifier isActive(address _key) {
+        require (tenantInfo.active_tenants[_key] == true,
+                    "Check to ensure that the key interacting with the function is active with contract");
         _;
     }
     
