@@ -55,6 +55,14 @@ library StateFactoryContract {
         bytes rule;
         bool active;
     }
+    
+    struct Proposal {
+        bytes proposal;
+        uint proposal_count;
+        uint votes;
+        uint start_date;
+        uint finish_date;
+    }
    
    
     struct BuildingInfo {
@@ -85,6 +93,11 @@ library StateFactoryContract {
         mapping(address => mapping(uint => bytes)) rules;
         mapping(uint => address[]) rule_too_instructors;
         bytes[] rulings;
+    }
+    
+    struct ProposalInfo {
+        mapping(address => Proposal) proposals_set;
+        uint[] total_proposals;
     }
     
     function NewFactory(BuildingInfo storage build, string memory _name, uint _buildNum, uint maxlots, uint sizesqm, uint fire_exits, address _owner, address _manager) internal {
@@ -155,5 +168,10 @@ library StateFactoryContract {
         rule.rule_too_instructors[_rule_num] = _instructors;
     }
     
+    function newProposal(ProposalInfo storage prop, string memory _prop, uint _start_date, uint _finish_date) internal {
+        bytes memory new_prop = abi.encode(_prop);
+        prop.proposals_set[msg.sender] = Proposal(new_prop, prop.total_proposals.length, 0, _start_date, _finish_date);
+        prop.total_proposals.push(_start_date);
+    }
     
 }
