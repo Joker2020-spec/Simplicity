@@ -1,6 +1,8 @@
 pragma solidity ^0.5.12;
 
-contract PaymentContract is TenantContract {
+import"./StateFactoryContract.sol";
+
+contract PaymentContract {
     
     
     using StateFactoryContract for StateFactoryContract.PaymentInfo;
