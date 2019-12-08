@@ -331,7 +331,7 @@ contract PaymentContract is TenantContract {
         checkAddress(_too);
         checkPaymentValid(_too, pay_num);
         checkPayableAmount(_amount, pay_num, _too);
-        checkTimeValid(pay_num, _finish_date, _too);
+        // checkTimeValid(pay_num, _finish_date, _too);
          for (uint i = 0; i < payments_created.length; i++) {
              if (payments_created[i] == pay_num) {
                  payment_info.payments_created[_too][pay_num].payable_amount = _amount;
@@ -371,7 +371,10 @@ contract PaymentContract is TenantContract {
     
     function checkTimeValid(uint pay_num, uint finish_date, address _too) internal view {
         uint time_length = payment_info.payments_created[_too][pay_num].time;
-        require(now + time_length == finish_date);
+        require(now + time_length >= finish_date);
+        if (now + time_length > finish_date) {
+            require (now + time_length > finish_date + 5 minutes);
+        }
     }
     
     function checkTimePeriod(uint _timeLength) internal view {
