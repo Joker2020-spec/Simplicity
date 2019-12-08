@@ -1,6 +1,6 @@
 pragma solidity ^0.5.12;
 
-import"./Untitled.sol";
+import"./StateFactoryContract.sol";
 
 contract GovernanceFactory {
     
