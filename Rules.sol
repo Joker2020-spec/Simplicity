@@ -1,22 +1,18 @@
 pragma solidity ^0.5.12;
-// pragma experimental ABIEncoderV2;
 
-import"./Untitled1.sol";
+import"./Untitled.sol";
 
 contract GovernanceFactory {
     
     using StateFactoryContract for StateFactoryContract.Building;
-    // using StateFactoryContract for StateFactoryContract.Rule;
     using StateFactoryContract for StateFactoryContract.RuleInfo;
     
     StateFactoryContract.Building Building;
     StateFactoryContract.RuleInfo rule_info;
-    //  StateFactoryContract.Rule rule;
     
     uint TOTAL_RULES_SET = 0;
     address OWNER;
     
-    uint[] total_rules;
     
     constructor () public {
         OWNER = msg.sender;
@@ -28,15 +24,22 @@ contract GovernanceFactory {
         _;
     }
     
-    function setNewRule(string memory _rule, address[] memory _instructors, uint _buildNumber) public isOwnerOrManager(_buildNumber) returns (bool rule_set) {
+    function setNewRule(string memory _rule, address[] memory _instructors, uint _buildNumber) public returns (bool rule_set) {
         rule_info.newRule(rule_info.rulings.length, _rule, _instructors, _buildNumber);
         TOTAL_RULES_SET++;
-        total_rules.push(TOTAL_RULES_SET);
         return rule_set;
     }
     
     function getRule(uint rule_num) public view returns (bytes memory) {
         return(rule_info.rulings[rule_num]);
+    }
+    
+    function getRuleByManager(address _key, uint _rule) public view returns (bytes memory) {
+        return(rule_info.rules[_key][_rule]);
+    }
+    
+    function getTotalAmountOfRules() public view returns (uint) {
+        return TOTAL_RULES_SET;
     }
     
     
