@@ -82,7 +82,8 @@ library StateFactoryContract {
     
     struct RuleInfo {
         mapping(address => mapping(uint => Rule)) rules_set;
-        mapping(address => mapping(uint => bytes[])) rules;
+        mapping(address => mapping(uint => bytes)) rules;
+        mapping(uint => address[]) rule_too_instructors;
         bytes[] rulings;
     }
     
@@ -147,11 +148,11 @@ library StateFactoryContract {
     }
     
     function newRule(RuleInfo storage rule, uint _rule_num, string memory _rule, address[] memory _instructors, uint _buildNumber) internal {
-        // _rule_num = rule.rulings.length;
         bytes memory new_rule = abi.encode(_rule);
-        _rule_num = rule.rulings.push(new_rule);
+        _rule_num = rule.rulings.push(new_rule) - 1;
         rule.rules_set[msg.sender][_buildNumber] = Rule(_buildNumber, rule.rulings.length, msg.sender, _instructors, new_rule, true);
-        rule.rules[msg.sender][_rule_num].push(new_rule);
+        rule.rules[msg.sender][_rule_num] = new_rule;
+        rule.rule_too_instructors[_rule_num] = _instructors;
     }
     
     
