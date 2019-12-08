@@ -38,6 +38,10 @@ contract GovernanceFactory {
         return(rule_info.rules[_key][_rule]);
     }
     
+    function getRuleInstructors(uint _rule) public view returns (address[] memory) {
+        return(rule_info.rule_too_instructors[_rule]);
+    }
+    
     function getTotalAmountOfRules() public view returns (uint) {
         return TOTAL_RULES_SET;
     }
