@@ -1,5 +1,7 @@
 pragma solidity ^0.5.12;
 
+import"./StateFactoryContract.sol";
+
 contract BuildingsContract {
     
     address public owner;
