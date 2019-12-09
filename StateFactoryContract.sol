@@ -62,6 +62,7 @@ library StateFactoryContract {
         uint votes;
         uint start_date;
         uint finish_date;
+        address creator;
     }
    
    
@@ -96,7 +97,7 @@ library StateFactoryContract {
     }
     
     struct ProposalInfo {
-        mapping(address => Proposal) proposals_set;
+        mapping(address => mapping(uint => Proposal)) proposals_set;
         uint[] total_proposals;
     }
     
@@ -170,7 +171,7 @@ library StateFactoryContract {
     
     function newProposal(ProposalInfo storage prop, string memory _prop, uint _start_date, uint _finish_date) internal {
         bytes memory new_prop = abi.encode(_prop);
-        prop.proposals_set[msg.sender] = Proposal(new_prop, prop.total_proposals.length, 0, _start_date, _finish_date);
+        prop.proposals_set[msg.sender][prop.total_proposals.length] = Proposal(new_prop, prop.total_proposals.length, 0, _start_date, _finish_date, msg.sender);
         prop.total_proposals.push(_start_date);
     }
     
