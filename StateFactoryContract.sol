@@ -208,7 +208,16 @@ library StateFactoryContract {
     
     function newCommittee(CommitteeInfo storage commit, string memory _name, uint _buildNum, address _viceChair, address[] memory _members) internal {
         commit.total_committees.length++;
-        commit.committees[total_committees.length] = Committee(_name, _buildNum, 
+        commit.committees[commit.total_committees.length] = Committee(
+            _name, 
+            _buildNum, 
+            commit.total_committees.length, 
+            _members.length, 
+            0, 
+            msg.sender, 
+            _viceChair, 
+            _members); 
+        
     }
     
 }
