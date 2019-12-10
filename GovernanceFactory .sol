@@ -82,6 +82,10 @@ contract GovernanceFactory {
                commit_info.committees[committ_num].chairperson,
                commit_info.committees[committ_num].vice_chairperson);
     }
+    
+    function getCommitteeMembers(uint committ_num) public view returns (address[] memory) {
+        return commit_info.committees[committ_num].members;
+    }
 
     
     function getTotalProposals() public view returns (uint) {
