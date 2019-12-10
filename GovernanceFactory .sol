@@ -38,9 +38,9 @@ contract GovernanceFactory {
     }
     
     function voteOnProposal(uint prop_num, address creator) public returns (bool vote_added, uint total_votes) {
-        prop_info.proposals_set[creator][prop_num].votes++;
+        prop_info.proposals_set[creator][prop_num].up_votes++;
         vote_added = true;
-        total_votes = prop_info.proposals_set[creator][prop_num].votes;
+        total_votes = prop_info.proposals_set[creator][prop_num].up_votes;
         return (vote_added, total_votes);
     } 
     
@@ -56,9 +56,10 @@ contract GovernanceFactory {
         return(rule_info.rule_too_instructors[_rule]);
     }
     
-    function getProposal(uint prop_num, address creator) public view returns (bytes memory, uint, uint, uint, address) {
+    function getProposal(uint prop_num, address creator) public view returns (bytes memory, uint, uint, uint, uint, address) {
         return(prop_info.proposals_set[creator][prop_num].proposal,
-               prop_info.proposals_set[creator][prop_num].votes,
+               prop_info.proposals_set[creator][prop_num].up_votes,
+               prop_info.proposals_set[creator][prop_num].down_votes,
                prop_info.proposals_set[creator][prop_num].start_date,
                prop_info.proposals_set[creator][prop_num].finish_date,
                prop_info.proposals_set[creator][prop_num].creator);
@@ -73,4 +74,4 @@ contract GovernanceFactory {
     }
     
     
-} 
+}
