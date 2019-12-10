@@ -7,10 +7,12 @@ contract GovernanceFactory {
     using StateFactoryContract for StateFactoryContract.Building;
     using StateFactoryContract for StateFactoryContract.RuleInfo;
     using StateFactoryContract for StateFactoryContract.ProposalInfo;
+    using StateFactoryContract for StateFactoryContract.CommitteeInfo;
     
     StateFactoryContract.Building Building;
     StateFactoryContract.RuleInfo rule_info;
     StateFactoryContract.ProposalInfo prop_info;
+    StateFactoryContract.CommitteeInfo commit_info;
     
     uint TOTAL_RULES_SET = 0;
     address OWNER;
@@ -24,6 +26,12 @@ contract GovernanceFactory {
         require (msg.sender == Building.owner || msg.sender == Building.manager,
                     "Caller of the function is the owner or manager of the building");
         _;
+    }
+    
+    function createNewCommittee(string memory _name, uint _buildNumber, address _viceChair, address[] memory _members) public returns (bool commit_active) {
+        commit_info.newCommittee(_name, _buildNumber, _viceChair, _members);
+        commit_active = true;
+        return commit_active;
     }
     
     function setNewRule(string memory _rule, address[] memory _instructors, uint _buildNumber) public returns (bool rule_set) {
@@ -64,6 +72,17 @@ contract GovernanceFactory {
                prop_info.proposals_set[creator][prop_num].finish_date,
                prop_info.proposals_set[creator][prop_num].creator);
     }
+    
+    function getCommitteeInfo(uint committ_num) public view returns (string memory, uint, uint, uint, uint, address, address) {
+        return(commit_info.committees[committ_num].name,
+               commit_info.committees[committ_num].building,
+               commit_info.committees[committ_num].committee_num,
+               commit_info.committees[committ_num].total_members,
+               commit_info.committees[committ_num].proposals_made,
+               commit_info.committees[committ_num].chairperson,
+               commit_info.committees[committ_num].vice_chairperson);
+    }
+
     
     function getTotalProposals() public view returns (uint) {
         return prop_info.total_proposals.length;
