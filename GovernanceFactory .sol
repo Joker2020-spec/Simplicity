@@ -34,6 +34,11 @@ contract GovernanceFactory {
         return commit_active;
     }
     
+    function addNewCommitteeMember(uint committ_number, address _member) public {
+        commit_info.committees[committ_number].members.push(_member);
+    }
+    
+    
     function setNewRule(string memory _rule, address[] memory _instructors, uint _buildNumber) public returns (bool rule_set) {
         rule_info.newRule(rule_info.rulings.length, _rule, _instructors, _buildNumber);
         TOTAL_RULES_SET++;
