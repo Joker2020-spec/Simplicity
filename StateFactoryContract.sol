@@ -206,4 +206,9 @@ library StateFactoryContract {
         prop.total_proposals.push(_start_date);
     }
     
+    function newCommittee(CommitteeInfo storage commit, string memory _name, uint _buildNum, address _viceChair, address[] memory _members) internal {
+        commit.total_committees.length++;
+        commit.committees[total_committees.length] = Committee(_name, _buildNum, 
+    }
+    
 }
