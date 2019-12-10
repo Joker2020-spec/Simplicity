@@ -65,6 +65,17 @@ library StateFactoryContract {
         uint finish_date;
         address creator;
     }
+    
+    struct Committee {
+        string name;
+        uint building;
+        uint committee_num;
+        uint total_members;
+        uint proposals_made;
+        address chairperson;
+        address vice_chairperson;
+        address[] members;
+    }
    
    
     struct BuildingInfo {
@@ -98,8 +109,14 @@ library StateFactoryContract {
     }
     
     struct ProposalInfo {
-        mapping(address => mapping(uint => Proposal)) proposals_set;
+        mapping (address => mapping(uint => Proposal)) proposals_set;
         uint[] total_proposals;
+    }
+    
+    struct CommitteeInfo {
+        mapping (uint => Committee) committees;
+        mapping (address => mapping (uint => Committee)) members;
+        uint[] total_committees;
     }
     
     function NewFactory(BuildingInfo storage build, string memory _name, uint _buildNum, uint maxlots, uint sizesqm, uint fire_exits, address _owner, address _manager) internal {
