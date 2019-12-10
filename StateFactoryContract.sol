@@ -59,7 +59,8 @@ library StateFactoryContract {
     struct Proposal {
         bytes proposal;
         uint proposal_count;
-        uint votes;
+        uint up_votes;
+        uint down_votes;
         uint start_date;
         uint finish_date;
         address creator;
@@ -164,14 +165,27 @@ library StateFactoryContract {
     function newRule(RuleInfo storage rule, uint _rule_num, string memory _rule, address[] memory _instructors, uint _buildNumber) internal {
         bytes memory new_rule = abi.encode(_rule);
         _rule_num = rule.rulings.push(new_rule) - 1;
-        rule.rules_set[msg.sender][_buildNumber] = Rule(_buildNumber, rule.rulings.length, msg.sender, _instructors, new_rule, true);
+        rule.rules_set[msg.sender][_buildNumber] = Rule(
+            _buildNumber, 
+            rule.rulings.length, 
+            msg.sender, 
+            _instructors, 
+            new_rule, 
+            true);
         rule.rules[msg.sender][_rule_num] = new_rule;
         rule.rule_too_instructors[_rule_num] = _instructors;
     }
     
     function newProposal(ProposalInfo storage prop, string memory _prop, uint _start_date, uint _finish_date) internal {
         bytes memory new_prop = abi.encode(_prop);
-        prop.proposals_set[msg.sender][prop.total_proposals.length] = Proposal(new_prop, prop.total_proposals.length, 0, _start_date, _finish_date, msg.sender);
+        prop.proposals_set[msg.sender][prop.total_proposals.length] = Proposal(
+            new_prop, 
+            prop.total_proposals.length, 
+            0,
+            0,
+            _start_date, 
+            _finish_date, 
+            msg.sender);
         prop.total_proposals.push(_start_date);
     }
     
