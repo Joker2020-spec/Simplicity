@@ -37,7 +37,7 @@ contract DocumentFactory {
             recivers: _for,
             doc_number: this_doc,
             check_points: 0,
-            open_period: 7 days,
+            open_period: now + 7 days,
             sent: true,
             check_finished: false
         });
@@ -90,7 +90,7 @@ contract DocumentFactory {
     }
     
     function CheckOpenPeriod(uint doc_num) internal view {
-        // require (docs[doc_num].open_period > now);
+        require (docs[doc_num].open_period > now);
         require (docs[doc_num].check_finished == false);
     }
     
