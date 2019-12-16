@@ -13,8 +13,10 @@ contract DocumentFactory {
         address sender;
         address[] recivers;
         uint doc_number;
-        uint checkPoints;
+        uint check_points;
+        uint open_period;
         bool sent;
+        bool check_finished;
     }
     
     
@@ -34,8 +36,10 @@ contract DocumentFactory {
             sender: msg.sender,
             recivers: _for,
             doc_number: this_doc,
-            checkPoints: 0,
-            sent: true
+            check_points: 0,
+            open_period: 7 days,
+            sent: true,
+            check_finished: false
         });
         sent_docs_linked[msg.sender][this_doc] = doc;
         sender_receivers[msg.sender][this_doc][_hash] = _for;
@@ -45,15 +49,17 @@ contract DocumentFactory {
     
     function ValidateCheckPoint(uint doc_num) public returns (bool doc_checked) {
         CheckDocValid(doc_num);
-        require (Valid_CheckPoints > docs[doc_num].checkPoints);
-        for (uint i = 0; i < docs.length; i++) {
-            if (doc_num == docs.length) {
-                docs[doc_num].checkPoints + 1;
+        CheckOpenPeriod(doc_num);
+        require (Valid_CheckPoints > docs[doc_num].check_points);
+     
+                docs[doc_num].check_points++;
                 doc_checked = true;
-            }
-        }
+                
+        checkPoints(doc_num);
+        closeOpenPeriod(doc_num);
         return doc_checked;
     }
+    
     
     function GetDoc(uint doc_num) public view returns (bytes32) {
         return(docs[doc_num].doc_hash);
@@ -79,9 +85,25 @@ contract DocumentFactory {
         return Total_Documents;
     }
     
-     function CheckDocValid(uint doc_num) internal {
-        require (docs[doc_num].sent = true);
+     function CheckDocValid(uint doc_num) internal view {
+        require (docs[doc_num].sent == true);
     }
     
+    function CheckOpenPeriod(uint doc_num) internal view {
+        // require (docs[doc_num].open_period > now);
+        require (docs[doc_num].check_finished == false);
+    }
+    
+    function checkPoints(uint doc_num) private {
+        if (docs[doc_num].check_points == Valid_CheckPoints) {
+            docs[doc_num].check_finished = true;
+        }
+    }
+    
+    function closeOpenPeriod(uint doc_num) private {
+        if (docs[doc_num].check_points == Valid_CheckPoints) {
+            docs[doc_num].open_period = 0;
+        }
+    }
     
 }
