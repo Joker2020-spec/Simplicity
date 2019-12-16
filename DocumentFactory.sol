@@ -1,8 +1,11 @@
 pragma solidity ^0.5.12; 
 
+
 contract DocumentFactory {
     
+    
     uint Total_Documents;
+    
     
     struct Doc {
         bytes32 doc_hash;
@@ -11,15 +14,15 @@ contract DocumentFactory {
         bool sent;
     }
     
+    
     mapping (address => mapping(uint => Doc)) sent_docs_linked;
     mapping (address => mapping(uint => mapping (bytes32 => address[]))) sender_receivers;
     
     
-    mapping (address => bytes32) docs_linked;
-    
-    
     
     Doc[] public docs;
+    
+    
     
     function SendDoc(bytes32 _hash, address[] memory _recivers) public returns (bool success) {
         address[] memory _for = _recivers;
@@ -61,5 +64,4 @@ contract DocumentFactory {
     }
     
     
-  
 }
