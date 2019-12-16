@@ -5,12 +5,15 @@ contract DocumentFactory {
     
     
     uint Total_Documents;
+    uint Valid_CheckPoints = 10;
     
     
     struct Doc {
         bytes32 doc_hash;
         address sender;
         address[] recivers;
+        uint doc_number;
+        uint checkPoints;
         bool sent;
     }
     
@@ -23,7 +26,6 @@ contract DocumentFactory {
     Doc[] public docs;
     
     
-    
     function SendDoc(bytes32 _hash, address[] memory _recivers) public returns (bool success) {
         address[] memory _for = _recivers;
         uint this_doc = Total_Documents++;
@@ -31,12 +33,26 @@ contract DocumentFactory {
             doc_hash: _hash,
             sender: msg.sender,
             recivers: _for,
+            doc_number: this_doc,
+            checkPoints: 0,
             sent: true
         });
         sent_docs_linked[msg.sender][this_doc] = doc;
         sender_receivers[msg.sender][this_doc][_hash] = _for;
         docs.push(doc);
         return success;
+    }
+    
+    function ValidateCheckPoint(uint doc_num) public returns (bool doc_checked) {
+        CheckDocValid(doc_num);
+        require (Valid_CheckPoints > docs[doc_num].checkPoints);
+        for (uint i = 0; i < docs.length; i++) {
+            if (doc_num == docs.length) {
+                docs[doc_num].checkPoints + 1;
+                doc_checked = true;
+            }
+        }
+        return doc_checked;
     }
     
     function GetDoc(uint doc_num) public view returns (bytes32) {
@@ -55,12 +71,16 @@ contract DocumentFactory {
         return(docs[doc_num].doc_hash, docs[doc_num].recivers);
     }
     
-    function geTotaltDocReceivers(address sender, uint doc, bytes32 hash) public view returns (uint) {
+    function getTotalDocReceivers(address sender, uint doc, bytes32 hash) public view returns (uint) {
         return sender_receivers[sender][doc][hash].length;
     }
     
     function getTotalDocs() public view returns (uint) {
         return Total_Documents;
+    }
+    
+     function CheckDocValid(uint doc_num) internal {
+        require (docs[doc_num].sent = true);
     }
     
     
