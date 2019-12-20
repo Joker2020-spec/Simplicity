@@ -9,9 +9,11 @@ contract TenantContract is BuildingsContract {
     uint public TOTAL_AMOUNT_OF_TENANTS = 0;
     
     
+    using StateFactoryContract for StateFactoryContract.BuildingInfo;
     using StateFactoryContract for StateFactoryContract.TenantInfo;
     
     
+    StateFactoryContract.BuildingInfo buildingInfo;
     StateFactoryContract.TenantInfo tenantInfo;
     
     
@@ -24,11 +26,12 @@ contract TenantContract is BuildingsContract {
         _;
     }
     
-    function addNewTenant(string memory _name, uint building_num,  uint _lot, uint _rent, bool _owner) public returns (bool success) {
+    function addNewTenant(string memory _name, uint building_num,  uint _lot, uint _rent, bool _owner, address build_manager) public returns (bool success) {
         TOTAL_AMOUNT_OF_TENANTS++;
         list_of_tenants.push(TOTAL_AMOUNT_OF_TENANTS);
         tenantInfo.localised[msg.sender][list_of_tenants.length] = building_num;
         tenantInfo.newTenant(_name, list_of_tenants.length, building_num, _lot, _rent, _owner);
+        buildingInfo.owners[building_num][build_manager].tenants.push(msg.sender);
         return success;
     }
     
