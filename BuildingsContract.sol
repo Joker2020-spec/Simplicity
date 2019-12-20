@@ -38,20 +38,20 @@ contract BuildingsContract {
     function newBuilding(string memory _name, uint maxlots, uint sizesqm, uint fire_exits, address _owner, address _manager) public returns (bool success) {
         require (max_buildings > buildings.length,
                         "The amount of buildings using the contract is not above the MAX LIMIT of 50");
-        buildingInfo.NewFactory(_name, buildings.length, maxlots, sizesqm, fire_exits, _owner, _manager);
+        buildingInfo.NewFactory(_name, buildings.length, maxlots, sizesqm, fire_exits, _owner, _manager);                 
         current_buildings++;
         buildings.push(current_buildings);
         return success;
     }
     
-    function getBuilding(address _owner) public view returns (string memory, uint, uint, uint, uint, address, address) {
-        return(buildingInfo.owners[_owner].build_name,
-               buildingInfo.owners[_owner].build_number,
-               buildingInfo.owners[_owner].total_lots,
-               buildingInfo.owners[_owner].size_sqm,
-               buildingInfo.owners[_owner].fire_exits,
-               buildingInfo.owners[_owner].owner,
-               buildingInfo.owners[_owner].manager);
+    
+    function getBuilding(uint number, address _owner) public view returns (string memory, uint, uint, uint, uint, address) {
+        return(buildingInfo.owners[number][_owner].build_name,
+               buildingInfo.owners[number][_owner].build_number,
+               buildingInfo.owners[number][_owner].total_lots,
+               buildingInfo.owners[number][_owner].size_sqm,
+               buildingInfo.owners[number][_owner].fire_exits,
+               buildingInfo.owners[number][_owner].owner);
     }
     
     function addAuthorizedKey(address newkey) internal {
