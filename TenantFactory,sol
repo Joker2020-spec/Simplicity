@@ -6,7 +6,7 @@ import"./BuildingsContract.sol";
 contract TenantContract is BuildingsContract {
     
     
-    uint public TOTAL_AMOUNT_OF_TENANTS = 0;
+    uint TOTAL_AMOUNT_OF_TENANTS = 0;
     
     
     using StateFactoryContract for StateFactoryContract.BuildingInfo;
