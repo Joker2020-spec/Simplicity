@@ -94,7 +94,8 @@ contract PaymentContract {
     
     function checkTimeValid(uint pay_num, uint finish_date, address _too) internal view {
         uint time_length = payment_info.payments_created[_too][pay_num].time;
-        require(now + 5 minutes + time_length >= finish_date);
+        require(now + 5 minutes + time_length >= finish_date, 
+                    "The payment has been finalised within the correct time line of it's allocated date");
     }
     
     function checkTimePeriod(uint _timeLength) internal view {
