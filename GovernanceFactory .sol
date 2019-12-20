@@ -55,7 +55,14 @@ contract GovernanceFactory {
         vote_added = true;
         total_votes = prop_info.proposals_set[creator][prop_num].up_votes;
         return (vote_added, total_votes);
-    } 
+    }
+    
+    function voteDownOnProposal(uint prop_num, address creator) public returns (bool vote_added, uint total_votes) {
+        prop_info.proposals_set[creator][prop_num].down_votes++;
+        vote_added =  true;
+        total_votes = prop_info.proposals_set[creator][prop_num].down_votes;
+        return (vote_added, total_votes);
+    }
     
     function getRule(uint rule_num) public view returns (bytes memory) {
         return(rule_info.rulings[rule_num]);
