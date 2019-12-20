@@ -70,7 +70,7 @@ contract PaymentContract {
              }
          }
          payments_made.push(pay_num);
-         return success;
+         return true;
     }
     
     function getFinalisedPayment(address _too, uint pay_num) public view returns (uint, uint, uint, bool, address, address) {
