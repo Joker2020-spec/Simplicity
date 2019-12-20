@@ -44,6 +44,16 @@ contract BuildingsContract {
         return success;
     }
     
+    function getBuilding(address _owner) public view returns (string memory, uint, uint, uint, uint, address, address) {
+        return(buildingInfo.owners[_owner].build_name,
+               buildingInfo.owners[_owner].build_number,
+               buildingInfo.owners[_owner].total_lots,
+               buildingInfo.owners[_owner].size_sqm,
+               buildingInfo.owners[_owner].fire_exits,
+               buildingInfo.owners[_owner].owner,
+               buildingInfo.owners[_owner].manager);
+    }
+    
     function addAuthorizedKey(address newkey) internal {
         buildingInfo.authorized[newkey] = true;
     }
