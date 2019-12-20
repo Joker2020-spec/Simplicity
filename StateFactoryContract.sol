@@ -12,6 +12,7 @@ library StateFactoryContract {
         uint fire_exits;
         address owner;
         address manager;
+        address[] tenants;
     }
       
     
@@ -79,7 +80,7 @@ library StateFactoryContract {
    
    
     struct BuildingInfo {
-        mapping (address => Building) owners;
+        mapping (uint => mapping(address => Building)) owners;
         mapping (address => bool) authorized;
     }
     
@@ -122,15 +123,17 @@ library StateFactoryContract {
     function NewFactory(BuildingInfo storage build, string memory _name, uint _buildNum, uint maxlots, uint sizesqm, uint fire_exits, address _owner, address _manager) internal {
         require (build.authorized[msg.sender] == true,
                     "The creator of the Factory is an authorzied key");
-        _buildNum = 0;            
-        build.owners[msg.sender] = Building(
+        _buildNum = 0;
+        address[] storage tenants = build.owners[_buildNum][msg.sender].tenants;
+        build.owners[_buildNum][msg.sender] = Building(
             _name,
             _buildNum,
             maxlots,
             sizesqm,
             fire_exits,
             _owner,
-            _manager);
+            _manager,
+            tenants);
     }
     
     function newTenant(TenantInfo storage tenant, string memory _name, uint _tenantNum, uint building_num,  uint _lot, uint _rent, bool _owner) internal {
